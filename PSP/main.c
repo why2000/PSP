@@ -7,6 +7,7 @@ int main(void) {
 	char* testres2 = strip(teststr2);
 	printf("%s\n", testres1);
 	printf("%s\n", testres2);
+    //free heaps
 	free(testres1);
 	free(testres2);
 }

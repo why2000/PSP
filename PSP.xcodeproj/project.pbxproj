@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9693513F22197D7D007B1CEA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693513E22197D7D007B1CEA /* main.c */; };
 		9693514822197E7A007B1CEA /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693514622197E7A007B1CEA /* utils.c */; };
+		9693514C22199D49007B1CEA /* reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693514B22199D49007B1CEA /* reader.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +30,8 @@
 		9693514522197E6F007B1CEA /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		9693514622197E7A007B1CEA /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		9693514722197E7A007B1CEA /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		9693514A22199D49007B1CEA /* reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
+		9693514B22199D49007B1CEA /* reader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reader.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +68,8 @@
 				9693513E22197D7D007B1CEA /* main.c */,
 				9693514722197E7A007B1CEA /* utils.h */,
 				9693514622197E7A007B1CEA /* utils.c */,
+				9693514A22199D49007B1CEA /* reader.h */,
+				9693514B22199D49007B1CEA /* reader.c */,
 			);
 			path = PSP;
 			sourceTree = "<group>";
@@ -126,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9693513F22197D7D007B1CEA /* main.c in Sources */,
+				9693514C22199D49007B1CEA /* reader.c in Sources */,
 				9693514822197E7A007B1CEA /* utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

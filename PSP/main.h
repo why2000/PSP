@@ -7,9 +7,10 @@
 
 
 //includes
-#include<utils.h>
+#include"utils.h"
 
 //defines
+#define MAXLINE 1024
 enum token_kind {
 	ERROR_TOKEN,
 	IDENT,

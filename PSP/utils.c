@@ -1,4 +1,4 @@
-#include<main.h>
+#include"main.h"
 
 
 //remove left spaces, return in heap
@@ -21,7 +21,7 @@ char* rstrip(const char* oristr) {
 	char* newstr = (char*)malloc(strlen(oristr)+1);
 	int orip;
 	int newp;
-	int length = strlen(oristr);
+	unsigned long length = strlen(oristr);
 	for (orip = length - 1, newp = length - 1; oristr[orip] == ' '; orip--, newp--);
 	newstr[newp + 1] = '\0';
 	for (; orip >= 0; orip--, newp--) {

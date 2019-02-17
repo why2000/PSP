@@ -1,4 +1,4 @@
-#include<main.h>
+#include"main.h"
 
 int main(void) {
 	char teststr1[100] = " test stri p  ";

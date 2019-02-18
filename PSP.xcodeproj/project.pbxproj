@@ -12,6 +12,7 @@
 		9693514F2219A208007B1CEA /* ExtDefList.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693514E2219A208007B1CEA /* ExtDefList.c */; };
 		969351522219A2CD007B1CEA /* ExtDef.c in Sources */ = {isa = PBXBuildFile; fileRef = 969351512219A2CD007B1CEA /* ExtDef.c */; };
 		969351552219A3A6007B1CEA /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = 969351542219A3A6007B1CEA /* errors.c */; };
+		96935158221AED6B007B1CEA /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = 96935157221AED6B007B1CEA /* output.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +39,8 @@
 		969351512219A2CD007B1CEA /* ExtDef.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExtDef.c; sourceTree = "<group>"; };
 		969351532219A3A6007B1CEA /* errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = errors.h; sourceTree = "<group>"; };
 		969351542219A3A6007B1CEA /* errors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = errors.c; sourceTree = "<group>"; };
+		96935156221AED6B007B1CEA /* output.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = output.h; sourceTree = "<group>"; };
+		96935157221AED6B007B1CEA /* output.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,8 @@
 				969351512219A2CD007B1CEA /* ExtDef.c */,
 				969351532219A3A6007B1CEA /* errors.h */,
 				969351542219A3A6007B1CEA /* errors.c */,
+				96935156221AED6B007B1CEA /* output.h */,
+				96935157221AED6B007B1CEA /* output.c */,
 			);
 			path = PSP;
 			sourceTree = "<group>";
@@ -140,6 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96935158221AED6B007B1CEA /* output.c in Sources */,
 				9693513F22197D7D007B1CEA /* main.c in Sources */,
 				969351522219A2CD007B1CEA /* ExtDef.c in Sources */,
 				9693514F2219A208007B1CEA /* ExtDefList.c in Sources */,

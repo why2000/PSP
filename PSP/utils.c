@@ -6,7 +6,7 @@
 //  Copyright © 2019年 伍瀚缘. All rights reserved.
 //
 
-#include"main.h"
+#include"utils.h"
 
 
 //remove left spaces, return in heap
@@ -15,7 +15,7 @@ char* lstrip(const char* oristr) {
 	char* newstr = (char*)malloc(strlen(oristr)+1);
 	char* orip;
 	char* newp = newstr;
-	for (orip = oristr; *orip == ' '; orip++);
+	for (orip = (char*)oristr; *orip == ' '; orip++);
 	for (; *orip != '\0'; orip++, newp++) {
 		*newp = *orip;
 	}
@@ -27,12 +27,12 @@ char* lstrip(const char* oristr) {
 char* rstrip(const char* oristr) {
 	//heap
 	char* newstr = (char*)malloc(strlen(oristr)+1);
-	int orip;
-	int newp;
-	unsigned long length = strlen(oristr);
+	ulong orip;
+	ulong newp;
+	ulong length = strlen(oristr);
 	for (orip = length - 1, newp = length - 1; oristr[orip] == ' '; orip--, newp--);
 	newstr[newp + 1] = '\0';
-	for (; orip >= 0; orip--, newp--) {
+	for (; orip+1 > 0; orip--, newp--) {
 		newstr[newp] = oristr[orip];
 	}
 	return newstr;

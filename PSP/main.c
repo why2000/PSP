@@ -8,7 +8,11 @@
 
 #include"main.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
+    int index;
+    for (index = 1; index < argc; index++){
+        printf("%s", argv[index]);
+    }
 	char teststr1[100] = " test stri p  ";
 	char teststr2[100] = "  test stri p ";
 	char* testres1 = strip(teststr1);

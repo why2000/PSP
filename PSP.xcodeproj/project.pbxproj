@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		9693513F22197D7D007B1CEA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693513E22197D7D007B1CEA /* main.c */; };
 		9693514822197E7A007B1CEA /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693514622197E7A007B1CEA /* utils.c */; };
-		9693514C22199D49007B1CEA /* reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693514B22199D49007B1CEA /* reader.c */; };
+		9693514F2219A208007B1CEA /* ExtDefList.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693514E2219A208007B1CEA /* ExtDefList.c */; };
+		969351522219A2CD007B1CEA /* ExtDef.c in Sources */ = {isa = PBXBuildFile; fileRef = 969351512219A2CD007B1CEA /* ExtDef.c */; };
+		969351552219A3A6007B1CEA /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = 969351542219A3A6007B1CEA /* errors.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,8 +32,12 @@
 		9693514522197E6F007B1CEA /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		9693514622197E7A007B1CEA /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		9693514722197E7A007B1CEA /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		9693514A22199D49007B1CEA /* reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
-		9693514B22199D49007B1CEA /* reader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reader.c; sourceTree = "<group>"; };
+		9693514D2219A208007B1CEA /* ExtDefList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtDefList.h; sourceTree = "<group>"; };
+		9693514E2219A208007B1CEA /* ExtDefList.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExtDefList.c; sourceTree = "<group>"; };
+		969351502219A2CD007B1CEA /* ExtDef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtDef.h; sourceTree = "<group>"; };
+		969351512219A2CD007B1CEA /* ExtDef.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExtDef.c; sourceTree = "<group>"; };
+		969351532219A3A6007B1CEA /* errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = errors.h; sourceTree = "<group>"; };
+		969351542219A3A6007B1CEA /* errors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = errors.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,8 +74,12 @@
 				9693513E22197D7D007B1CEA /* main.c */,
 				9693514722197E7A007B1CEA /* utils.h */,
 				9693514622197E7A007B1CEA /* utils.c */,
-				9693514A22199D49007B1CEA /* reader.h */,
-				9693514B22199D49007B1CEA /* reader.c */,
+				9693514D2219A208007B1CEA /* ExtDefList.h */,
+				9693514E2219A208007B1CEA /* ExtDefList.c */,
+				969351502219A2CD007B1CEA /* ExtDef.h */,
+				969351512219A2CD007B1CEA /* ExtDef.c */,
+				969351532219A3A6007B1CEA /* errors.h */,
+				969351542219A3A6007B1CEA /* errors.c */,
 			);
 			path = PSP;
 			sourceTree = "<group>";
@@ -131,8 +141,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9693513F22197D7D007B1CEA /* main.c in Sources */,
-				9693514C22199D49007B1CEA /* reader.c in Sources */,
+				969351522219A2CD007B1CEA /* ExtDef.c in Sources */,
+				9693514F2219A208007B1CEA /* ExtDefList.c in Sources */,
 				9693514822197E7A007B1CEA /* utils.c in Sources */,
+				969351552219A3A6007B1CEA /* errors.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

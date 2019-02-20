@@ -8,15 +8,16 @@
 
 #include "output.h"
 //output to console
-int EDLoutput(EDL* curEDL, FILE* fp){
+int EDLoutput(EDL* curEDL, FILE* write_fp){
+    printf("output test!\n");
     
-    
-    if(fp != NULL){
-        EDLFILEoutput(curEDL, fp);
+    if(write_fp != NULL){
+        EDLFILEoutput(curEDL, write_fp);
     }
+    return 0;
 }
 
 //output to file
-int EDLFILEoutput(EDL* curEDL, FILE* fp){
-    
+int EDLFILEoutput(EDL* curEDL, FILE* write_fp){
+    return 0;
 }

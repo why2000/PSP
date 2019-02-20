@@ -6,9 +6,8 @@
 //  Copyright © 2019年 伍瀚缘. All rights reserved.
 //
 
-#ifndef errors_h
-#define errors_h
+#pragma once
 
-#include <stdio.h>
+#include "main.h"
 
-#endif /* errors_h */
+int errorfound(const int index);

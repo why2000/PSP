@@ -13,18 +13,18 @@
 #include<stdlib.h>
 #include<string.h>
 
-
-//includes
-#include"utils.h"
-#include "ExtDefList.h"
-
 //defines
 #define MAXLINE 1024
+#define MAX_TOKEN_SIZE 32
 typedef unsigned long ulong;
+typedef unsigned short ushort;
 int anastart(const char*);
 
 enum token_kind {
+    EMPTY_TOKEN,
 	ERROR_TOKEN,
+    NUMBER,
+    LETTER,
 	IDENT,
 	INT_CONST,
 	FLOAT_CONST,
@@ -34,12 +34,30 @@ enum token_kind {
 	CHAR,
 	IF,
 	ELSE,
-	EQ,
-	ASSIGN,
-	LP,
-	RP,
-	SEMI,
-	COMMA
+    GEQ,// >=
+    LEQ,// <=
+    EQ,// ==
+    NEQ,// !=
+    LOR,// ||
+    LAND,// &&
+    NOT,// !
+    NOR,// ^
+    BOR,// |
+    BAND,// &
+    PLUS,// +
+    MINUS,// -
+    MULTI,// *
+    DIVIDE,// /
+	ASSIGN,// =
+    GT,// >
+    LT,// <
+    LB,// {
+    RB,// }
+	LP,// (
+	RP,// )
+    SEMI,// ;
+	COMMA,// ,
+    DOT// .
 };
 
 enum struct_type {
@@ -186,7 +204,11 @@ typedef struct FUNCD{
     struct COMPS* FUNCB;
 }FUNCD;
 
-
+//includes
+#include"utils.h"
+#include"ExtDefList.h"
+#include"output.h"
+#include"errors.h"
 
 
 

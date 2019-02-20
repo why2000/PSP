@@ -7,7 +7,8 @@
 //
 
 #include"main.h"
-
+ulong line_num = 0;
+char token_name[MAX_TOKEN_SIZE];
 int main(int argc, char* argv[]) {
     int index;
     int* mainstatus = (int*)malloc(sizeof(int)*(argc));
@@ -41,17 +42,22 @@ int main(int argc, char* argv[]) {
 }
 
 int anastart(const char* filename){
-    FILE* fp = NULL;
+    FILE* read_fp = NULL;
 //    int curstatus;
-    if((fp = fopen(filename, "r")) == NULL){
+    if((read_fp = fopen(filename, "r")) == NULL){
         printf("Error! Failed to open %s.\n", filename);
         return 1;
     }
-    EDL* curEDL = (EDL*)malloc(sizeof(EDL));
-    if (curEDL = ExtDefList(fp)){
-        EDLoutput(curEDL);
+    EDL* curEDL;
+    curEDL = ExtDefList(read_fp);
+    fclose(read_fp);
+    if (curEDL){
+        EDLoutput(curEDL, NULL);
+        free(curEDL);
+        fclose(read_fp);
         return 0;
     }else{
+        fclose(read_fp);
         return 1;
     }
     return 0;

@@ -7,6 +7,10 @@
 //
 
 #include "ExtDefList.h"
-EDL* ExtDefList(FILE* fp, EDL* curEDL){
-    return 0;
+EDL* ExtDefList(FILE* read_fp){
+    enum token_kind cur_tk;
+    EDL* curEDL = (EDL*)malloc(sizeof(EDL));
+    cur_tk = get_token(read_fp);
+    
+    return curEDL;
 }

@@ -9,5 +9,5 @@
 #pragma once
 
 #include "main.h"
-EDL* ExtDefList(FILE*, EDL*);
+EDL* ExtDefList(FILE*);
 

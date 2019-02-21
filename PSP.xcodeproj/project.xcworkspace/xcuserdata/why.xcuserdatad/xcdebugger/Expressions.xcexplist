@@ -3,18 +3,18 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "main:main.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "mainstatus[2]">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "get_token:utils.c">
          <PersistentStrings>
             <PersistentString
                value = "token_name">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "main:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "mainstatus[2]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -26,6 +26,14 @@
             </PersistentString>
             <PersistentString
                value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExtDefList:ExtDef.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "token_name">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

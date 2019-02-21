@@ -11,5 +11,5 @@
 #include "main.h"
 
 EDL* ExtDefList(FILE*);
-ED* ExtDef(FILE*);
+ED* ExtDef(FILE*, enum token_kind);
 

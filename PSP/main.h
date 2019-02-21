@@ -77,11 +77,11 @@ enum struct_type {
     NORMSTA,
     ASSIGNSTA,
 };
-typedef union ED{
+typedef struct ED{
     struct EVD* EVD;
     struct FUNCD* FUNCD;
 }ED;
-typedef union COMP{
+typedef struct COMP{
     //VarNameList
     struct EVD* EVD;
     //STALIST;
@@ -92,13 +92,13 @@ typedef struct EDL{
     //如果void指针不好用可以直接列出两个子树，必有一个为空,也可以union
     //ED_kind could be EXTVARDEF or FUNCDEF
     enum struct_type ED_kind;
-    union ED* ED;
+    struct ED* ED;
     struct EDL* EDL;
 }EDL;
 
 //ExtVarNameList(int `a, b`)
 typedef struct EVNL{
-    char* var_name;
+    char var_name[MAX_TOKEN_SIZE];
     struct EVNL* next;
 }EVNL;
 
@@ -115,7 +115,7 @@ typedef struct COMPS{
     //COMP_kind could be EXTVARDEF or STATELIST
     enum struct_type COMP_kind;
     //CompState(sentence)(statement or LVL)
-    union COMP* COMP;
+    struct COMP* COMP;
     //CompStates
     struct COMPS* COMPS;
 }COMPS;

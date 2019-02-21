@@ -13,6 +13,7 @@
 		969351552219A3A6007B1CEA /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = 969351542219A3A6007B1CEA /* errors.c */; };
 		96935158221AED6B007B1CEA /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = 96935157221AED6B007B1CEA /* output.c */; };
 		9693515B221EDF79007B1CEA /* ExtVarDef.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693515A221EDF79007B1CEA /* ExtVarDef.c */; };
+		9693515E221EFEB8007B1CEA /* FuncDef.c in Sources */ = {isa = PBXBuildFile; fileRef = 9693515D221EFEB8007B1CEA /* FuncDef.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +42,8 @@
 		96935157221AED6B007B1CEA /* output.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
 		96935159221EDF79007B1CEA /* ExtVarDef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtVarDef.h; sourceTree = "<group>"; };
 		9693515A221EDF79007B1CEA /* ExtVarDef.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExtVarDef.c; sourceTree = "<group>"; };
+		9693515C221EFEB8007B1CEA /* FuncDef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FuncDef.h; sourceTree = "<group>"; };
+		9693515D221EFEB8007B1CEA /* FuncDef.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FuncDef.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,8 @@
 				96935157221AED6B007B1CEA /* output.c */,
 				96935159221EDF79007B1CEA /* ExtVarDef.h */,
 				9693515A221EDF79007B1CEA /* ExtVarDef.c */,
+				9693515C221EFEB8007B1CEA /* FuncDef.h */,
+				9693515D221EFEB8007B1CEA /* FuncDef.c */,
 			);
 			path = PSP;
 			sourceTree = "<group>";
@@ -145,6 +150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9693515E221EFEB8007B1CEA /* FuncDef.c in Sources */,
 				96935158221AED6B007B1CEA /* output.c in Sources */,
 				9693513F22197D7D007B1CEA /* main.c in Sources */,
 				969351522219A2CD007B1CEA /* ExtDef.c in Sources */,

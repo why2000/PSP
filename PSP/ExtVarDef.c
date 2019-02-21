@@ -15,7 +15,8 @@ EVD* ExtVarDef(FILE* read_fp, enum token_kind declare_kind, char* first_name){
     EVD_cur->EVD_kind = declare_kind;
     EVD_cur->EVNL = (EVNL*)malloc(sizeof(EVNL));
     strcpy(EVD_cur->EVNL->var_name, first_name);
-    EVD_cur->EVNL->next = ExtVarNameList(read_fp, EVD_cur->EVNL);
+    EVD_cur->EVNL->next = (EVNL*)malloc(sizeof(EVNL));
+    EVD_cur->EVNL->next = ExtVarNameList(read_fp, EVD_cur->EVNL->next);
     return EVD_cur;
 }
 
@@ -26,7 +27,7 @@ EVNL* ExtVarNameList(FILE* read_fp, EVNL* EVNL_cur){
         token_buf = get_token(read_fp);
         if(token_buf == COMMA){
             EVNL_cur->next = (EVNL*)malloc(sizeof(EVNL));
-            EVNL_cur->next = ExtVarNameList(read_fp, EVNL_cur);
+            EVNL_cur->next = ExtVarNameList(read_fp, EVNL_cur->next);
             return EVNL_cur;
         }
         else if(token_buf == SEMI){

@@ -221,8 +221,9 @@ typedef struct FUNCD{
 
 //includes
 #include"utils.h"
-#include"ExtVarDef.h"
 #include"ExtDef.h"
+#include"ExtVarDef.h"
+#include"FuncDef.h"
 #include"output.h"
 #include"errors.h"
 

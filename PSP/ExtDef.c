@@ -59,7 +59,7 @@ ED* ExtDef(FILE* read_fp, enum token_kind kind_buf){
     }
     token_buf = get_token(read_fp);
     if(token_buf == LP){
-        ED_cur->FUNCD = NULL;
+        ED_cur->FUNCD = FuncDef(read_fp, kind_buf, ED_name);
     }
     else if(token_buf == COMMA){
         ED_cur->EVD = ExtVarDef(read_fp, kind_buf, ED_name);

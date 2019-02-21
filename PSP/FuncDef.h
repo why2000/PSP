@@ -10,3 +10,5 @@
 
 #include "main.h"
 
+FUNCD* FuncDef(FILE*, enum token_kind, char*);
+FPL* FormParaList(FILE*);

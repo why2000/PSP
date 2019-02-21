@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
 }
 
 int anastart(const char* filename){
+    line_num = 0;
     FILE* read_fp = NULL;
 //    int curstatus;
     if((read_fp = fopen(filename, "r")) == NULL){

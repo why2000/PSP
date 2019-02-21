@@ -34,14 +34,25 @@ enum token_kind {
 	CHAR,
 	IF,
 	ELSE,
+    LB,// {
+    RB,// }
+    LP,// (
+    RP,// )
+    SEMI,// ;
+    COMMA,// ,
+    DOT,// .
     GEQ,// >=
     LEQ,// <=
     EQ,// ==
     NEQ,// !=
+    PLUSEQ,// +=
+    MINUSEQ,// -=
+    MULTIEQ,// *=
+    DIVIDEEQ,// /=
     LOR,// ||
     LAND,// &&
-    NOT,// !
     NOR,// ^
+    NOT,// !
     BOR,// |
     BAND,// &
     PLUS,// +
@@ -50,14 +61,8 @@ enum token_kind {
     DIVIDE,// /
 	ASSIGN,// =
     GT,// >
-    LT,// <
-    LB,// {
-    RB,// }
-	LP,// (
-	RP,// )
-    SEMI,// ;
-	COMMA,// ,
-    DOT// .
+    LT// <
+
 };
 
 enum struct_type {
@@ -72,36 +77,45 @@ enum struct_type {
     NORMSTA,
     ASSIGNSTA,
 };
-
+typedef union ED{
+    struct EVD* EVD;
+    struct FUNCD* FUNCD;
+}ED;
+typedef union COMP{
+    //VarNameList
+    struct EVD* EVD;
+    //STALIST;
+    struct STAL* STAL;
+}COMP;
 //ExtDefList
 typedef struct EDL{
     //如果void指针不好用可以直接列出两个子树，必有一个为空,也可以union
     //ED_kind could be EXTVARDEF or FUNCDEF
     enum struct_type ED_kind;
-    void* ED;
+    union ED* ED;
     struct EDL* EDL;
 }EDL;
 
 //ExtVarNameList(int `a, b`)
 typedef struct EVNL{
     char* var_name;
-    struct ENVL* next;
+    struct EVNL* next;
 }EVNL;
 
 //ExtVarDef(`int a, b;`)
 typedef struct EVD{
     //EVD_kind is a token kind.(int, char, etc.)
     enum token_kind EVD_kind;
-    struct ENVL* ENVL;
+    struct EVNL* EVNL;
 }EVD;
 
 //CompoundStatements
 typedef struct COMPS{
     //同EDL理
-    //COMP_kind could be EXTVARNAMELIST or STATELIST
+    //COMP_kind could be EXTVARDEF or STATELIST
     enum struct_type COMP_kind;
     //CompState(sentence)(statement or LVL)
-    void* COMP;
+    union COMP* COMP;
     //CompStates
     struct COMPS* COMPS;
 }COMPS;
@@ -109,7 +123,6 @@ typedef struct COMPS{
 //AssignState(`a = b`)
 typedef struct ASSSTA{
     void* ASSSTA;
-    
 }ASSSTA;
 
 //constState(`1`)
@@ -167,7 +180,7 @@ typedef struct APL{
 typedef struct FUNCSTA{
     enum struct_type STA_kind;
     //FuncName
-    char* func_name;
+    char func_name[MAX_TOKEN_SIZE];
     //ActualParaList
     struct APL* APL;
 }FUNCSTA;
@@ -186,10 +199,10 @@ typedef struct STAL{
 //FormParaList
 //Notice that "int fun(float a,b);" is not a proper type, "b" will be of "int".
 typedef struct FPL{
-    
+    //FPKind is a token kind
     enum token_kind FP_kind;
     //FormParaName
-    char* FP_name;
+    char FP_name[MAX_TOKEN_SIZE];
     //FormParaList
     struct FPL* next;
 }FPL;
@@ -198,6 +211,8 @@ typedef struct FPL{
 typedef struct FUNCD{
     //funcKind is a token kind
     enum token_kind FUNC_kind;
+    //funcName
+    char FUNC_name[MAX_TOKEN_SIZE];
     //FormalParaList
     struct FPL* FPL;
     //funcBody
@@ -206,7 +221,8 @@ typedef struct FUNCD{
 
 //includes
 #include"utils.h"
-#include"ExtDefList.h"
+#include"ExtVarDef.h"
+#include"ExtDef.h"
 #include"output.h"
 #include"errors.h"
 

@@ -10,5 +10,24 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "get_token:utils.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "token_name">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExtDefList:ExtDefList.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "token_name">
+            </PersistentString>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

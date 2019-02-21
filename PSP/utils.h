@@ -22,3 +22,4 @@ int is_number(char buf_ch);
 int is_letter(char buf_ch);
 int check_single(enum token_kind);
 int check_const(enum token_kind);
+int check_declare(enum token_kind);

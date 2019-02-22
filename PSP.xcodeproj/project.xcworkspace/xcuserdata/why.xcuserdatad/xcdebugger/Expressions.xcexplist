@@ -3,12 +3,7 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "get_token:utils.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "token_name">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "anastart:main.c">
       </ContextState>
       <ContextState
          contextName = "main:main.c">
@@ -17,6 +12,50 @@
                value = "mainstatus[2]">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExtDef:ExtDef.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "rootRNL">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "push_RNL:utils.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "rootRNL">
+            </PersistentString>
+            <PersistentString
+               value = "leaveRNL">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExtVarDef:ExtVarDef.c">
+      </ContextState>
+      <ContextState
+         contextName = "get_token:utils.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "token_name">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExtDefList:ExtDef.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "token_name">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExtVarNameList:ExtVarDef.c">
+      </ContextState>
+      <ContextState
+         contextName = "FormParaList:FuncDef.c">
       </ContextState>
       <ContextState
          contextName = "ExtDefList:ExtDefList.c">
@@ -30,10 +69,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "ExtDefList:ExtDef.c">
+         contextName = "FuncDef:FuncDef.c">
          <PersistentStrings>
             <PersistentString
-               value = "token_name">
+               value = "rootRNL">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

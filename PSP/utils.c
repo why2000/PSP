@@ -16,6 +16,9 @@
 extern int line_num;//"main.c"
 //clear everytime used
 extern char token_name[MAX_TOKEN_SIZE];//"main.c"
+extern FILE* read_fp;//"main.c"
+extern RNL* rootRNL;//"main.c"
+extern RNL* leaveRNL;//"main.c"
 
 //remove left spaces, return in heap
 char* lstrip(const char* oristr) {
@@ -58,7 +61,7 @@ char* strip(const char* oristr) {
 	return newstr;
 }
 
-enum token_kind get_token(FILE* read_fp){
+enum token_kind get_token(void){
     char buf_ch = '\0';
     
     ushort index;
@@ -377,8 +380,14 @@ int check_declare(enum token_kind tk){
     return 0;
 }
     
-
-
+void push_RNL(RNL** RNLp, char* ED_name, enum struct_type var_type, enum token_kind value_type){
+    (*RNLp)->var_type = var_type;
+    (*RNLp)->value_type = value_type;
+    strcpy((*RNLp)->var_name, ED_name);
+    (*RNLp)->next = (RNL*)malloc(sizeof(RNL));
+    (*RNLp) = (*RNLp)->next;
+    (*RNLp)->next = NULL;
+}
 
 
 

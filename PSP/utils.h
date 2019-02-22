@@ -16,10 +16,11 @@ char* rstrip(const char*);
 //remove spaces, return in heap
 char* strip(const char*);
 //read one token from file
-enum token_kind get_token(FILE*);
+enum token_kind get_token(void);
 enum token_kind single_token(char);
 int is_number(char buf_ch);
 int is_letter(char buf_ch);
 int check_single(enum token_kind);
 int check_const(enum token_kind);
 int check_declare(enum token_kind);
+void push_RNL(RNL**, char*, enum struct_type, enum token_kind);

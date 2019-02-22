@@ -9,9 +9,14 @@
 #include "FuncDef.h"
 extern int line_num;//"main.c"
 extern char token_name[MAX_TOKEN_SIZE];//"main.c"
+extern FILE* read_fp;//"main.c"
+extern RNL* rootRNL;//"main.c"
+extern RNL* leaveRNL;//"main.c"
 
-FUNCD* FuncDef(FILE* read_fp, enum token_kind declare_kind, char* FUNC_name){
-    enum token_kind buf_token = get_token(read_fp);
+FUNCD* FuncDef(enum token_kind declare_kind, char* FUNC_name){
+    RNL* rootFunRNL = (RNL*)malloc(sizeof(RNL));
+    RNL* leaveFunRNL = rootFunRNL;
+    enum token_kind buf_token = get_token();
     FUNCD* FUNCD_cur = (FUNCD*)malloc(sizeof(FUNCD*));
     strcpy(FUNCD_cur->FUNC_name, FUNC_name);
     FUNCD_cur->FUNC_kind = declare_kind;
@@ -21,43 +26,52 @@ FUNCD* FuncDef(FILE* read_fp, enum token_kind declare_kind, char* FUNC_name){
     else if(check_declare(buf_token)){
         FUNCD_cur->FPL = (FPL*)malloc(sizeof(FPL));
         FUNCD_cur->FPL->FP_kind = buf_token;
-        buf_token = get_token(read_fp);
+        buf_token = get_token();
         if(buf_token == IDENT){
+            push_RNL(&leaveFunRNL, token_name, EXTVARDEF, FUNCD_cur->FPL->FP_kind);
             strcpy(FUNCD_cur->FPL->FP_name, token_name);
         }
         else{
             errorfound(0);//invalid FPL
         }
-        buf_token = get_token(read_fp);
+        buf_token = get_token();
         if(buf_token == COMMA){
-            FUNCD_cur->FPL->next = FormParaList(read_fp);
+            FUNCD_cur->FPL->next = FormParaList(leaveFunRNL);
         }
         else if(buf_token == RP){
             FUNCD_cur->FPL->next = NULL;
         }
     }
+    buf_token = get_token();
+    if(buf_token == LB){
+        FUNCD_cur->FUNCB = CompStates(leaveFunRNL, rootFunRNL);
+    }
+    else{
+        errorfound(0);//invalid FuncDef
+    }
     return FUNCD_cur;
 }
 
-FPL* FormParaList(FILE* read_fp){
+FPL* FormParaList(RNL* leaveFunRNL){
     FPL* FPL_cur = (FPL*)malloc(sizeof(FPL));
-    enum token_kind buf_token = get_token(read_fp);
+    enum token_kind buf_token = get_token();
     if(check_declare(buf_token)){
         FPL_cur->FP_kind = buf_token;
     }
     else{
         errorfound(0);//invalid FPL
     }
-    buf_token = get_token(read_fp);
+    buf_token = get_token();
     if(buf_token == IDENT){
+        push_RNL(&leaveFunRNL, token_name, EXTVARDEF, FPL_cur->FP_kind);
         strcpy(FPL_cur->FP_name, token_name);
     }
     else{
         errorfound(0);//invalid FPL
     }
-    buf_token = get_token(read_fp);
+    buf_token = get_token();
     if(buf_token == COMMA){
-        FPL_cur->next = FormParaList(read_fp);
+        FPL_cur->next = FormParaList(leaveFunRNL);
     }
     else if(buf_token == RP){
         FPL_cur->next = NULL;

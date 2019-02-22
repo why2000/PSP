@@ -7,6 +7,10 @@
 //
 
 #include "output.h"
+extern FILE* read_fp;//"main.c"
+extern RNL* rootRNL;//"main.c"
+extern RNL* leaveRNL;//"main.c"
+
 //output to console
 int EDLoutput(EDL* curEDL, FILE* write_fp){
     printf("output test!\n");

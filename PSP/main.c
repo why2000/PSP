@@ -9,6 +9,9 @@
 #include"main.h"
 ulong line_num = 0;
 char token_name[MAX_TOKEN_SIZE];
+RNL* rootRNL;
+RNL* leaveRNL;
+FILE* read_fp;
 int main(int argc, char* argv[]) {
     int index;
     int* mainstatus = (int*)malloc(sizeof(int)*(argc));
@@ -43,14 +46,16 @@ int main(int argc, char* argv[]) {
 
 int anastart(const char* filename){
     line_num = 0;
-    FILE* read_fp = NULL;
+    read_fp = NULL;
 //    int curstatus;
     if((read_fp = fopen(filename, "r")) == NULL){
         printf("Error! Failed to open %s.\n", filename);
         return 1;
     }
+    rootRNL = (RNL*)malloc(sizeof(RNL));
+    leaveRNL = rootRNL;
     EDL* curEDL;
-    curEDL = ExtDefList(read_fp);
+    curEDL = ExtDefList();
     fclose(read_fp);
     if (curEDL){
         EDLoutput(curEDL, NULL);

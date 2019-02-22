@@ -1,8 +1,8 @@
 //
-//  ExtDef.h
+//  COMPS.h
 //  PSP
 //
-//  Created by 伍瀚缘 on 2019/2/18.
+//  Created by 伍瀚缘 on 2019/2/22.
 //  Copyright © 2019年 伍瀚缘. All rights reserved.
 //
 
@@ -10,6 +10,4 @@
 
 #include "main.h"
 
-EDL* ExtDefList(void);
-ED* ExtDef(enum token_kind);
-
+COMPS* CompStates(RNL*, RNL*);

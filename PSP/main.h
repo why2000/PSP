@@ -71,12 +71,23 @@ enum struct_type {
     EXTVARDEF,
     FUNCDEF,
     STATELIST,
-    IFTHEN,
     IFELSE,
     RETURNSTA,
     NORMSTA,
     ASSIGNSTA,
 };
+
+//每个函数解析过程中传入当前外部注册表与函数内部注册表
+//RegisteredNameList
+typedef struct RNL{
+    char var_name[MAX_TOKEN_SIZE];
+    enum token_kind value_type;
+    //FUNCDEF or EXTVARDEF
+    enum struct_type var_type;
+    struct RNL* next;
+}RNL;
+
+//ExtDef
 typedef struct ED{
     struct EVD* EVD;
     struct FUNCD* FUNCD;
@@ -120,31 +131,34 @@ typedef struct COMPS{
     struct COMPS* COMPS;
 }COMPS;
 
-//AssignState(`a = b`)
-typedef struct ASSSTA{
-    void* ASSSTA;
-}ASSSTA;
-
-//constState(`1`)
-typedef struct CONSTSTA{
-    char* const_name;
-}CONSTSTA;
-
-//IDState(`a`)
-typedef struct IDSTA{
-    char* ID_name;
-    //ActualParaList
-    struct APL* APL;
-}IDSTA;
+////AssignState(`a = b`)
+//typedef struct ASSSTA{
+//    void* ASSSTA;
+//}ASSSTA;
+//
+////constState(`1`)
+//typedef struct CONSTSTA{
+//    char* const_name;
+//}CONSTSTA;
+//
+////IDState(`a`)
+//typedef struct IDSTA{
+//    char* ID_name;
+//    //ActualParaList
+//    struct APL* APL;
+//}IDSTA;
 
 //NormalState(`a > b`, `a + b`)
 typedef struct NMSTA{
     //normalstate kind(>, <, >=, etc.)
     enum token_kind NM_kind;
-    //leftSTA
-    void* left;
-    //rightSTA
-    void* right;
+    //name of var/const
+    char left_name[MAX_TOKEN_SIZE];
+    char right_name[MAX_TOKEN_SIZE];
+    //leftSTA, NULL if const/var
+    struct NMSTA* left;
+    //rightSTA, NULL if const/var
+    struct NMSTA* right;
 }NMSTA;
 
 
@@ -152,26 +166,21 @@ typedef struct NMSTA{
 typedef struct ELIF{
     struct NMSTA* NMSTA;
     struct COMPS* IFCOMPS;
+    // could be NULL
     struct COMPS* ELCOMPS;
 }ELIF;
-
-//if-then
-typedef struct THIF{
-    struct NMSTA* NMSTA;
-    struct COMPS* IFCOMPS;
-}THIF;
 
 //return
 typedef struct RETSTA{
     enum struct_type STA_kind;
-    void* STA;
+    struct NMSTA* NMSTA;
 }RETSTA;
 
 //ActualParaList
 typedef struct APL{
     enum struct_type STA_kind;
     //Statement
-    void* STA;
+    NMSTA* STA;
     //ActualParaList
     struct APL* APL;
 }APL;
@@ -187,7 +196,7 @@ typedef struct FUNCSTA{
 
 //StateList
 typedef struct STAL{
-    //STA_kind could be IFELSE, IFTHEN, NORMSTA, RETSTA
+    //STA_kind could be IFELSE, NORMSTA, RETSTA
     enum struct_type STA_kind;
     //Statement
     void* STA;
@@ -224,6 +233,7 @@ typedef struct FUNCD{
 #include"ExtDef.h"
 #include"ExtVarDef.h"
 #include"FuncDef.h"
+#include"COMPS.h"
 #include"output.h"
 #include"errors.h"
 

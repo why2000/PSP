@@ -10,5 +10,5 @@
 
 #include "main.h"
 
-FUNCD* FuncDef(FILE*, enum token_kind, char*);
-FPL* FormParaList(FILE*);
+FUNCD* FuncDef(enum token_kind, char*);
+FPL* FormParaList(RNL*);

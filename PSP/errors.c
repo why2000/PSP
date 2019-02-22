@@ -7,6 +7,9 @@
 //
 
 #include "errors.h"
+extern FILE* read_fp;//"main.c"
+extern RNL* rootRNL;//"main.c"
+extern RNL* leaveRNL;//"main.c"
 //报错系统
 int errorfound(const int index) {//index为错误索引
     /**************************改动此函数时不要 删除 枚举类型中的任何项****************************/

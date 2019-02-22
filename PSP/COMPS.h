@@ -10,4 +10,4 @@
 
 #include "main.h"
 
-COMPS* CompStates(RNL*, RNL*);
+COMPS* CompStates(RNL**, RNL**);

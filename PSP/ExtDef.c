@@ -18,7 +18,9 @@ EDL* ExtDefList(void){
     tk_cur = get_token();
     EDL* EDL_cur = (EDL*)malloc(sizeof(EDL));
     if(tk_cur == EMPTY_TOKEN){
-        return NULL;
+        free(EDL_cur);
+        EDL_cur = NULL;
+        return EDL_cur;
     }
     else if(check_declare(tk_cur)){
         ED* buf_ED = ExtDef(tk_cur);
@@ -31,7 +33,9 @@ EDL* ExtDefList(void){
             EDL_cur->ED = buf_ED;
         }
         else{
-            return NULL;
+            free(EDL_cur);
+            EDL_cur = NULL;
+            return EDL_cur;
         }
     }
     else if(tk_cur == SEMI){

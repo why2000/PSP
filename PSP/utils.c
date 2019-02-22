@@ -146,7 +146,7 @@ enum token_kind get_token(void){
             }
         }
         else if(is_letter(buf_ch)){
-            if(last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR){
+            if(last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR || last_token == IF || last_token == ELSE || last_token == RET){
                 cur_token = IDENT;
                 if(buf_ch == 't'){
                     if(index == 2){
@@ -167,6 +167,27 @@ enum token_kind get_token(void){
                         }
                     }
                 }
+                if(buf_ch == 'e'){
+                    if(index == 3){
+                        if(token_name[0] == 'e' && token_name[1] == 'l' && token_name[2] == 's'){
+                            cur_token = ELSE;
+                        }
+                    }
+                }
+                if(buf_ch == 'n'){
+                    if(index == 5){
+                        if(token_name[0] == 'r' && token_name[1] == 'e' && token_name[2] == 't' && token_name[3] == 'u' && token_name[4] == 'r'){
+                            cur_token = RET;
+                        }
+                    }
+                }
+                if(buf_ch == 'f'){
+                    if(index == 1){
+                        if(token_name[0] == 'i'){
+                            cur_token = IF;
+                        }
+                    }
+                }
             }
             else if(last_token == CHAR_CONST){
                cur_token = CHAR_CONST;
@@ -184,7 +205,7 @@ enum token_kind get_token(void){
             if(last_token == INT_CONST || last_token == FLOAT_CONST || last_token == CHAR_CONST){
                 cur_token = last_token;
             }
-            else if (last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR){
+            else if (last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR || last_token == CHAR || last_token == IF || last_token == ELSE || last_token == RET){
                 cur_token = IDENT;
             }
             else if (last_token == EMPTY_TOKEN){

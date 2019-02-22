@@ -15,6 +15,7 @@
 
 //defines
 #define MAXLINE 1024
+#define MAX_TOKEN_NUM 1024
 #define MAX_TOKEN_SIZE 32
 typedef unsigned long ulong;
 typedef unsigned short ushort;
@@ -34,6 +35,7 @@ enum token_kind {
 	CHAR,
 	IF,
 	ELSE,
+    RET,
     LB,// {
     RB,// }
     LP,// (
@@ -71,10 +73,11 @@ enum struct_type {
     EXTVARDEF,
     FUNCDEF,
     STATELIST,
-    IFELSE,
+    IFSTA,
+    ELSESTA,
     RETURNSTA,
     NORMSTA,
-    ASSIGNSTA,
+    FUNCSTA
 };
 
 //每个函数解析过程中传入当前外部注册表与函数内部注册表
@@ -87,6 +90,15 @@ typedef struct RNL{
     struct RNL* next;
 }RNL;
 
+//StateList
+typedef struct STA{
+    struct FUNS* FUNS;
+    struct RTS* RTS;
+    struct IFTH* IFTH;
+    struct ELTH* ELTH;
+    struct NMS* NMS;
+}STA;
+
 //ExtDef
 typedef struct ED{
     struct EVD* EVD;
@@ -96,7 +108,7 @@ typedef struct COMP{
     //VarNameList
     struct EVD* EVD;
     //STALIST;
-    struct STAL* STAL;
+    struct STA* STA;
 }COMP;
 //ExtDefList
 typedef struct EDL{
@@ -127,8 +139,8 @@ typedef struct COMPS{
     enum struct_type COMP_kind;
     //CompState(sentence)(statement or LVL)
     struct COMP* COMP;
-    //CompStates
-    struct COMPS* COMPS;
+    //next CompState
+    struct COMPS* next;
 }COMPS;
 
 ////AssignState(`a = b`)
@@ -149,61 +161,54 @@ typedef struct COMPS{
 //}IDSTA;
 
 //NormalState(`a > b`, `a + b`)
-typedef struct NMSTA{
+typedef struct NMS{
     //normalstate kind(>, <, >=, etc.)
     enum token_kind NM_kind;
     //name of var/const
     char left_name[MAX_TOKEN_SIZE];
+    struct APL* left_APL;
     char right_name[MAX_TOKEN_SIZE];
+    struct APL* right_APL;
     //leftSTA, NULL if const/var
     struct NMSTA* left;
     //rightSTA, NULL if const/var
     struct NMSTA* right;
-}NMSTA;
+}NMS;
 
 
-//if-then-else
-typedef struct ELIF{
-    struct NMSTA* NMSTA;
+//if-then(else is comps)
+typedef struct IFTH{
+    struct NMS* NMS;
     struct COMPS* IFCOMPS;
-    // could be NULL
-    struct COMPS* ELCOMPS;
-}ELIF;
+}IFTH;
+
+//else-then
+typedef struct ELTH{
+    struct COMPS* ELSECOMPS;
+}ELTH;
 
 //return
-typedef struct RETSTA{
-    enum struct_type STA_kind;
-    struct NMSTA* NMSTA;
-}RETSTA;
+typedef struct RTS{
+    struct NMS* NMS;
+}RTS;
 
 //ActualParaList
 typedef struct APL{
     enum struct_type STA_kind;
     //Statement
-    NMSTA* STA;
+    NMS* NMS;
     //ActualParaList
     struct APL* APL;
 }APL;
 
 //funcState
-typedef struct FUNCSTA{
+typedef struct FUNS{
     enum struct_type STA_kind;
     //FuncName
     char func_name[MAX_TOKEN_SIZE];
     //ActualParaList
     struct APL* APL;
-}FUNCSTA;
-
-//StateList
-typedef struct STAL{
-    //STA_kind could be IFELSE, NORMSTA, RETSTA
-    enum struct_type STA_kind;
-    //Statement
-    void* STA;
-    //StateList
-    struct STAL* STAL;
-}STAL;
-
+}FUNS;
 
 //FormParaList
 //Notice that "int fun(float a,b);" is not a proper type, "b" will be of "int".
@@ -228,12 +233,15 @@ typedef struct FUNCD{
     struct COMPS* FUNCB;
 }FUNCD;
 
+
+
 //includes
 #include"utils.h"
 #include"ExtDef.h"
 #include"ExtVarDef.h"
 #include"FuncDef.h"
 #include"COMPS.h"
+#include"Statement.h"
 #include"output.h"
 #include"errors.h"
 

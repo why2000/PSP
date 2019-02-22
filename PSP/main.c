@@ -6,12 +6,16 @@
 //  Copyright © 2019年 伍瀚缘. All rights reserved.
 //
 
+//记得在所有errorfound(0);之前free所有函数中创建的堆
+
 #include"main.h"
 ulong line_num = 0;
 char token_name[MAX_TOKEN_SIZE];
 RNL* rootRNL;
 RNL* leaveRNL;
 FILE* read_fp;
+int IF_STATUS = 0;
+
 int main(int argc, char* argv[]) {
     int index;
     int* mainstatus = (int*)malloc(sizeof(int)*(argc));

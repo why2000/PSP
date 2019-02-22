@@ -14,7 +14,7 @@ extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
 
 FUNCD* FuncDef(enum token_kind declare_kind, char* FUNC_name){
-    RNL* rootFunRNL = (RNL*)malloc(sizeof(RNL));
+    RNL* rootFunRNL = leaveRNL;
     RNL* leaveFunRNL = rootFunRNL;
     enum token_kind buf_token = get_token();
     FUNCD* FUNCD_cur = (FUNCD*)malloc(sizeof(FUNCD*));
@@ -44,7 +44,9 @@ FUNCD* FuncDef(enum token_kind declare_kind, char* FUNC_name){
     }
     buf_token = get_token();
     if(buf_token == LB){
-        FUNCD_cur->FUNCB = CompStates(leaveFunRNL, rootFunRNL);
+        RNL* leaveFunRNL_buf = leaveFunRNL;
+        RNL* rootFunRNL_buf = rootFunRNL;
+        FUNCD_cur->FUNCB = CompStates(&leaveFunRNL_buf, &rootFunRNL_buf);
     }
     else{
         errorfound(0);//invalid FuncDef

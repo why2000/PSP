@@ -7,6 +7,7 @@
 //
 
 //记得在所有errorfound(0);之前free所有函数中创建的堆
+//2.23晚:理论上实现了类型不一致检测（未测试）
 
 #include"main.h"
 ulong line_num = 0;
@@ -49,6 +50,7 @@ int main(int argc, char* argv[]) {
 }
 
 int anastart(const char* filename){
+    free(NULL);
     line_num = 0;
     read_fp = NULL;
 //    int curstatus;

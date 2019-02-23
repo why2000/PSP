@@ -14,6 +14,7 @@ extern RNL* leaveRNL;//"main.c"
 int errorfound(const int index) {//index为错误索引
     /**************************改动此函数时不要 删除 枚举类型中的任何项****************************/
     enum errornum { TMRIGHT = 1, TMLEFT, NEGSQRT, COMPRESULT, ZERODENO, ABNOMALSYN, TMSYN, NOINPUT, TMDOTS};
+    printf("ERROR!!!");
     switch (index) {
         case TMRIGHT:
             printf("右括号过多)))\n");

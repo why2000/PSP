@@ -22,8 +22,9 @@ typedef unsigned short ushort;
 int anastart(const char*);
 
 enum token_kind {
-    EMPTY_TOKEN,
+    EMPTY_TOKEN = 0,
 	ERROR_TOKEN,
+    FUNC,
     NUMBER,
     LETTER,
 	IDENT,
@@ -49,12 +50,14 @@ enum token_kind {
     NEQ,// !=
     PLUSEQ,// +=
     MINUSEQ,// -=
+    MODEQ,// %=
     MULTIEQ,// *=
     DIVIDEEQ,// /=
     LOR,// ||
     LAND,// &&
-    NOR,// ^
+    XOR,// ^
     NOT,// !
+    MOD,// %
     BOR,// |
     BAND,// &
     PLUS,// +
@@ -64,7 +67,6 @@ enum token_kind {
 	ASSIGN,// =
     GT,// >
     LT// <
-
 };
 
 enum struct_type {
@@ -87,6 +89,7 @@ typedef struct RNL{
     enum token_kind value_type;
     //FUNCDEF or EXTVARDEF
     enum struct_type var_type;
+    struct FPL* FPL;
     struct RNL* next;
 }RNL;
 
@@ -143,36 +146,21 @@ typedef struct COMPS{
     struct COMPS* next;
 }COMPS;
 
-////AssignState(`a = b`)
-//typedef struct ASSSTA{
-//    void* ASSSTA;
-//}ASSSTA;
-//
-////constState(`1`)
-//typedef struct CONSTSTA{
-//    char* const_name;
-//}CONSTSTA;
-//
-////IDState(`a`)
-//typedef struct IDSTA{
-//    char* ID_name;
-//    //ActualParaList
-//    struct APL* APL;
-//}IDSTA;
-
 //NormalState(`a > b`, `a + b`)
 typedef struct NMS{
     //normalstate kind(>, <, >=, etc.)
     enum token_kind NM_kind;
+    //result kind(int, float, const)
+    enum token_kind res_kind;
     //name of var/const
-    char left_name[MAX_TOKEN_SIZE];
-    struct APL* left_APL;
-    char right_name[MAX_TOKEN_SIZE];
-    struct APL* right_APL;
+    char NMS_name[MAX_TOKEN_SIZE];
+    struct APL* APL;
     //leftSTA, NULL if const/var
-    struct NMSTA* left;
+    struct NMS* left;
     //rightSTA, NULL if const/var
-    struct NMSTA* right;
+    struct NMS* right;
+    struct NMS* next;
+    struct NMS* last;
 }NMS;
 
 
@@ -194,21 +182,11 @@ typedef struct RTS{
 
 //ActualParaList
 typedef struct APL{
-    enum struct_type STA_kind;
     //Statement
     NMS* NMS;
-    //ActualParaList
-    struct APL* APL;
+    //next ActualParaList
+    struct APL* next;
 }APL;
-
-//funcState
-typedef struct FUNS{
-    enum struct_type STA_kind;
-    //FuncName
-    char func_name[MAX_TOKEN_SIZE];
-    //ActualParaList
-    struct APL* APL;
-}FUNS;
 
 //FormParaList
 //Notice that "int fun(float a,b);" is not a proper type, "b" will be of "int".

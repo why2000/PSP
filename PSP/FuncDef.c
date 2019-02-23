@@ -64,6 +64,7 @@ FPL* FormParaList(RNL* leaveFunRNL){
         errorfound(0);//invalid FPL
     }
     buf_token = get_token();
+    //形参表不会变量名冲突，一定是可以安全注册的
     if(buf_token == IDENT){
         push_RNL(&leaveFunRNL, token_name, EXTVARDEF, FPL_cur->FP_kind);
         strcpy(FPL_cur->FP_name, token_name);

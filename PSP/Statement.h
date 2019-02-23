@@ -13,7 +13,9 @@
 //repol
 typedef struct REPOL{
     enum token_kind token_kind;
+    enum token_kind res_kind;
     char token_name[MAX_TOKEN_SIZE];
+    struct APL* APL;
     struct REPOL* next;
 }REPOL;
 
@@ -24,10 +26,12 @@ typedef struct SOP{
     struct SOP* last;
 }SOP;
 
-NMS* Statement(enum token_kind, char*);
+NMS* Statement(enum token_kind, char*, RNL*, RNL*);
+NMS* geneNMS(REPOL**, NMS**);
+APL* funCall(enum token_kind, char*, RNL*, RNL*);
 IFTH* ifState(RNL*, RNL*);
 ELTH* elseState(RNL*, RNL*);
-RTS* returnState(void);
+RTS* returnState(RNL*, RNL*);
 
 
 
@@ -35,4 +39,5 @@ void push_stack(SOP**, enum token_kind);
 enum token_kind get_stack(SOP**);
 enum token_kind pop_stack(SOP**);
 void push_list(REPOL** repol, enum token_kind token_kind, char* token_name);
-
+NMS* pop_out(NMS**);
+void push_out(NMS**, REPOL*);

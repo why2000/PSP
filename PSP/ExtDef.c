@@ -65,20 +65,35 @@ ED* ExtDef(enum token_kind kind_buf){
     }
     token_buf = get_token();
     if(token_buf == LP){
-        push_RNL(&leaveRNL, ED_name, FUNCDEF, kind_buf);
-        ED_cur->FUNCD = FuncDef(kind_buf, ED_name);
+        if(!search_RNL(rootRNL, ED_name)){
+            //函数返回值已注册
+            push_RNL(&leaveRNL, ED_name, FUNCDEF, kind_buf);
+            ED_cur->FUNCD = FuncDef(kind_buf, ED_name);
+        }
+        else{
+            errorfound(1);//has been registered
+        }
     }
     else if(token_buf == COMMA){
-        push_RNL(&leaveRNL, ED_name, EXTVARDEF, kind_buf);
-        ED_cur->EVD = ExtVarDef(kind_buf, ED_name);
+        if(!search_RNL(rootRNL, ED_name)){
+            push_RNL(&leaveRNL, ED_name, EXTVARDEF, kind_buf);
+            ED_cur->EVD = ExtVarDef(kind_buf, ED_name);
+        }
+        else{
+            errorfound(1);//has been registered
+        }
     }
     else if(token_buf == SEMI){
-        push_RNL(&leaveRNL, ED_name, EXTVARDEF, kind_buf);
-        ED_cur->EVD = (EVD*)malloc(sizeof(EVD));
-        ED_cur->EVD->EVNL = (EVNL*)malloc(sizeof(EVNL));
-        ED_cur->EVD->EVD_kind = kind_buf;
-        strcpy(ED_cur->EVD->EVNL->var_name, ED_name);
-        ED_cur->EVD->EVNL->next = NULL;
+        if(!search_RNL(rootRNL, ED_name)){
+            push_RNL(&leaveRNL, ED_name, EXTVARDEF, kind_buf);
+            ED_cur->EVD = (EVD*)malloc(sizeof(EVD));
+            ED_cur->EVD->EVNL = (EVNL*)malloc(sizeof(EVNL));
+            ED_cur->EVD->EVD_kind = kind_buf;
+            strcpy(ED_cur->EVD->EVNL->var_name, ED_name);
+            ED_cur->EVD->EVNL->next = NULL;
+        }else{
+            errorfound(1);//has been registered
+        }
     }
     else{
         errorfound(0);//invalid ED

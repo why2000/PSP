@@ -21,35 +21,33 @@ COMPS* CompStates(RNL** leaveFunRNL, RNL** rootFunRNL){
     enum token_kind buf_token = get_token();
     char name_buf[MAX_TOKEN_SIZE];
     strcpy(name_buf, token_name);
-    if(buf_token == ELSE && IF_STATUS){
-        COMPS_cur->COMP_kind = ELSESTA;
-        COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
-        COMPS_cur->COMP->STA->ELTH = elseState(*leaveFunRNL, *rootFunRNL);
-    }
-    IF_STATUS = 0;
     if(check_declare(buf_token)){
         COMPS_cur->COMP_kind = EXTVARDEF;
         COMPS_cur->COMP->EVD = (EVD*)malloc(sizeof(EVD));
         enum token_kind buf_kind = buf_token;
         COMPS_cur->COMP->EVD->EVD_kind = buf_kind;
-        buf_token = get_token();
-        if(buf_token == IDENT){
-            COMPS_cur->COMP->EVD->EVNL = (EVNL*)malloc(sizeof(EVNL));
-            COMPS_cur->COMP->EVD->EVNL = ExtVarNameList(COMPS_cur->COMP->EVD->EVNL, buf_kind, leaveFunRNL);
-        }
-        else{
-            errorfound(0);// invalid Internal Def
-        }
+        COMPS_cur->COMP->EVD->EVNL = (EVNL*)malloc(sizeof(EVNL));
+        COMPS_cur->COMP->EVD->EVNL = ExtVarNameList(COMPS_cur->COMP->EVD->EVNL, buf_kind, leaveFunRNL, (*rootFunRNL));
+        COMPS_cur->COMP->STA = NULL;
     }
     else if(buf_token == IF){
+        IF_STATUS = 1;
         COMPS_cur->COMP_kind = IFSTA;
         COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
         COMPS_cur->COMP->STA->IFTH = ifState(*leaveFunRNL, *rootFunRNL);
+        COMPS_cur->COMP->STA->RTS = NULL;
+        COMPS_cur->COMP->STA->ELTH = NULL;
+        COMPS_cur->COMP->STA->NMS = NULL;
+        COMPS_cur->COMP->EVD = NULL;
     }
     else if(buf_token == RET){
         COMPS_cur->COMP_kind = RETURNSTA;
         COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
-        COMPS_cur->COMP->STA->RTS = returnState();
+        COMPS_cur->COMP->STA->RTS = returnState(*leaveFunRNL, *rootFunRNL);
+        COMPS_cur->COMP->STA->IFTH = NULL;
+        COMPS_cur->COMP->STA->ELTH = NULL;
+        COMPS_cur->COMP->STA->NMS = NULL;
+        COMPS_cur->COMP->EVD = NULL;
     }
     else if(buf_token == RB){
         free(COMPS_cur->COMP);
@@ -57,11 +55,30 @@ COMPS* CompStates(RNL** leaveFunRNL, RNL** rootFunRNL){
         COMPS_cur = NULL;
         return COMPS_cur;
     }
+    else if(buf_token == ELSE){
+        if(IF_STATUS){
+            IF_STATUS = 0;
+            COMPS_cur->COMP_kind = ELSESTA;
+            COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
+            COMPS_cur->COMP->STA->ELTH = elseState(*leaveFunRNL, *rootFunRNL);
+            COMPS_cur->COMP->STA->RTS = NULL;
+            COMPS_cur->COMP->STA->IFTH = NULL;
+            COMPS_cur->COMP->STA->NMS = NULL;
+            COMPS_cur->COMP->EVD = NULL;
+        }
+        else{
+            errorfound(1);//else without if
+        }
+    }
     else{
         strcpy(name_buf, token_name);
         COMPS_cur->COMP_kind = NORMSTA;
         COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
-        COMPS_cur->COMP->STA->NMS = Statement(buf_token, name_buf);
+        COMPS_cur->COMP->STA->NMS = Statement(buf_token, name_buf, (*leaveFunRNL), (*rootFunRNL));
+        COMPS_cur->COMP->STA->RTS = NULL;
+        COMPS_cur->COMP->STA->ELTH = NULL;
+        COMPS_cur->COMP->STA->IFTH = NULL;
+        COMPS_cur->COMP->EVD = NULL;
     }
     COMPS_cur->next = CompStates(leaveFunRNL, rootFunRNL);
     return COMPS_cur;

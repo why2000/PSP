@@ -11,4 +11,4 @@
 #include "main.h"
 
 FUNCD* FuncDef(enum token_kind, char*);
-FPL* FormParaList(RNL*);
+FPL* FormParaList(RNL**);

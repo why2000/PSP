@@ -9,5 +9,5 @@
 #pragma once
 
 #include "main.h"
-
-int errorfound(const int index);
+enum errortype { SYNERR = 0, TMRIGHT, TMLEFT, UNREGISTED, REDUNDANT, INVALID, ABNOMALSYN, TMSYN, NOINPUT, TMDOTS};
+void* errorfound(enum errortype index);

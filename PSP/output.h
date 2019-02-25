@@ -9,5 +9,11 @@
 #pragma once
 
 #include "main.h"
-int EDLoutput(EDL*, FILE*);
-int EDLFILEoutput(EDL*, FILE*);
+void EDLoutput(EDL*);
+void EVDoutput(EVD*);
+void EVNLoutput(EVNL*);
+void FUNCDoutput(FUNCD*);
+void FPLoutput(FPL*);
+void COMPSoutput(COMPS*);
+void NMSoutput(NMS*);
+void APLoutput(APL*);

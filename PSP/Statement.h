@@ -30,8 +30,11 @@ NMS* Statement(enum token_kind, char*, RNL*, RNL*);
 NMS* geneNMS(REPOL**, NMS**);
 APL* funCall(enum token_kind, char*, RNL*, RNL*);
 IFTH* ifState(RNL*, RNL*);
+WHILETH* whileState(RNL*, RNL*);
 ELTH* elseState(RNL*, RNL*);
+FORTH* forState(RNL*, RNL*);
 RTS* returnState(RNL*, RNL*);
+COMPS* instantState(enum token_kind, char*, RNL*, RNL*);
 
 
 

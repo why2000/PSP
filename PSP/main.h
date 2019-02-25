@@ -37,6 +37,8 @@ enum token_kind {
 	IF,
 	ELSE,
     RET,
+    WHILE,
+    FOR,
     LB,// {
     RB,// }
     LP,// (
@@ -78,8 +80,12 @@ enum struct_type {
     IFSTA,
     ELSESTA,
     RETURNSTA,
+    WHILESTA,
+    FORSTA,
     NORMSTA,
-    FUNCSTA
+    FUNCSTA,
+    ENDOFSTA,
+    STARTOFSTA
 };
 
 //每个函数解析过程中传入当前外部注册表与函数内部注册表
@@ -91,6 +97,7 @@ typedef struct RNL{
     enum struct_type var_type;
     struct FPL* FPL;
     struct RNL* next;
+    struct RNL* last;
 }RNL;
 
 //StateList
@@ -100,6 +107,9 @@ typedef struct STA{
     struct IFTH* IFTH;
     struct ELTH* ELTH;
     struct NMS* NMS;
+    struct WHILETH* WHILETH;
+    // need change
+    struct FORTH* FORTH;
 }STA;
 
 //ExtDef
@@ -169,6 +179,18 @@ typedef struct IFTH{
     struct NMS* NMS;
     struct COMPS* IFCOMPS;
 }IFTH;
+
+typedef struct WHILETH{
+    struct NMS* NMS;
+    struct COMPS* WHILECOMPS;
+}WHILETH;
+
+typedef struct FORTH{
+    struct NMS* NMS_start;
+    struct NMS* NMS_check;
+    struct NMS* NMS_end;
+    struct COMPS* FORCOMPS;
+}FORTH;
 
 //else-then
 typedef struct ELTH{

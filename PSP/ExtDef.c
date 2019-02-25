@@ -12,14 +12,18 @@ extern char token_name[MAX_TOKEN_SIZE];//"main.c"
 extern FILE* read_fp;//"main.c"
 extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
+long dbugp = 0;
+int dbugi = 0;
 
 EDL* ExtDefList(void){
+    dbugi += 1;
     enum token_kind tk_cur;
     tk_cur = get_token();
     EDL* EDL_cur = (EDL*)malloc(sizeof(EDL));
+    EDL_cur->ED_kind = ENDOFSTA;
+    EDL_cur->ED = NULL;
+    EDL_cur->EDL = NULL;
     if(tk_cur == EMPTY_TOKEN){
-        free(EDL_cur);
-        EDL_cur = NULL;
         return EDL_cur;
     }
     else if(check_declare(tk_cur)){
@@ -33,8 +37,6 @@ EDL* ExtDefList(void){
             EDL_cur->ED = buf_ED;
         }
         else{
-            free(EDL_cur);
-            EDL_cur = NULL;
             return EDL_cur;
         }
     }
@@ -44,6 +46,10 @@ EDL* ExtDefList(void){
     else{
         errorfound(0);//invalid ExtDef
     }
+//    if(dbugi == 4){
+//        dbugp = (long)EDL_cur->ED->FUNCD->FUNCB->COMP->EVD->EVNL->next->next;
+//    }
+//    printf("hit");
     EDL_cur->EDL = ExtDefList();
     
     //    cur_tk = get_token(read_fp);
@@ -69,18 +75,20 @@ ED* ExtDef(enum token_kind kind_buf){
             //函数返回值已注册
             push_RNL(&leaveRNL, ED_name, FUNCDEF, kind_buf);
             ED_cur->FUNCD = FuncDef(kind_buf, ED_name);
+            ED_cur->EVD = NULL;
         }
         else{
-            errorfound(1);//has been registered
+            errorfound(REDUNDANT);//has been registered
         }
     }
     else if(token_buf == COMMA){
         if(!search_RNL(rootRNL, ED_name)){
             push_RNL(&leaveRNL, ED_name, EXTVARDEF, kind_buf);
             ED_cur->EVD = ExtVarDef(kind_buf, ED_name);
+            ED_cur->FUNCD = NULL;
         }
         else{
-            errorfound(1);//has been registered
+            errorfound(REDUNDANT);//has been registered
         }
     }
     else if(token_buf == SEMI){
@@ -90,9 +98,11 @@ ED* ExtDef(enum token_kind kind_buf){
             ED_cur->EVD->EVNL = (EVNL*)malloc(sizeof(EVNL));
             ED_cur->EVD->EVD_kind = kind_buf;
             strcpy(ED_cur->EVD->EVNL->var_name, ED_name);
-            ED_cur->EVD->EVNL->next = NULL;
+            ED_cur->EVD->EVNL->next = (EVNL*)malloc(sizeof(EVNL));
+            strcpy(ED_cur->EVD->EVNL->next->var_name, "###");
+            ED_cur->FUNCD = NULL;
         }else{
-            errorfound(1);//has been registered
+            errorfound(REDUNDANT);//has been registered
         }
     }
     else{

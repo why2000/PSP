@@ -11,4 +11,4 @@
 #include "main.h"
 
 EVD* ExtVarDef(enum token_kind, char*);
-EVNL* ExtVarNameList(EVNL*, enum token_kind, RNL**, RNL*);
+EVNL* ExtVarNameList(enum token_kind, RNL**, RNL*);

@@ -100,7 +100,7 @@ COMPS* CompStates(RNL** leaveFunRNL, RNL** rootFunRNL){
             COMPS_cur->COMP->EVD = NULL;
         }
         else{
-            errorfound(1);//else without if
+            errorfound(ELSEONLY);//else without if
         }
     }
     else{

@@ -11,7 +11,7 @@ extern FILE* read_fp;//"main.c"
 extern FILE* write_fp;//"main.c"
 extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
-int tab_number = 0;
+int tab_number = 1;
 
 void tab_print(){
     int i;
@@ -19,6 +19,55 @@ void tab_print(){
         fprintf(write_fp, "    ");
     }
 }
+
+void PREoutput(PRECOMPILES* curPC){
+    while(curPC->next != NULL){
+        tab_print();
+        fprintf(write_fp, "预编译指令位置: 第%d行\n", curPC->line);
+        tab_number += 1;
+        tab_print();
+        fprintf(write_fp, "指令内容:\n");
+        tab_number += 1;
+        if(curPC->PC_type == INCLUDE){
+            tab_print();
+            fprintf(write_fp, "INCLUDE: 包含%s\n", curPC->firstname);
+        }
+        else{
+            tab_print();
+            fprintf(write_fp, "DEFINE: 将符号%s替换为%s\n", curPC->firstname, curPC->secondname);
+        }
+        tab_number -= 1;
+        tab_number -= 1;
+        curPC = curPC->next;
+    }
+}
+
+
+void ANNoutput(ANNOTATIONS* curANN){
+    while(curANN->next != NULL){
+        tab_print();
+        fprintf(write_fp, "注释位置: 第%d行\n", curANN->line);
+        tab_number += 1;
+        tab_print();
+        fprintf(write_fp, "注释内容:\n");
+        tab_number -= 1;
+        int buf_tab_num = tab_number;
+        if(curANN->ANN_type == SINGLEANN){
+            tab_number = 0;
+            tab_print();
+            fprintf(write_fp, "//%s\n", curANN->ANN_string);
+            tab_number = buf_tab_num;
+        }
+        else{
+            tab_number = 0;
+            tab_print();
+            fprintf(write_fp, "/*%s*/\n", curANN->ANN_string);
+            tab_number = buf_tab_num;
+        }
+        curANN = curANN->next;
+    }
+}
+
 
 void EDLoutput(EDL* curEDL){
     while(curEDL->ED_kind != ENDOFSTA){
@@ -287,11 +336,14 @@ void NMSoutput(NMS* curNMS){
         tab_number -= 1;
     }
     else{
-        to_string(curNMS->NM_kind, buf_string);
         tab_print();
         fprintf(write_fp, "表达式:\n");
         tab_number += 1;
+        to_string(curNMS->res_kind, buf_string);
         tab_print();
+        fprintf(write_fp, "结果类型: %s\n", buf_string);
+        tab_print();
+        to_string(curNMS->NM_kind, buf_string);
         fprintf(write_fp, "运算符: %s\n", buf_string);
         tab_number += 1;
         tab_print();

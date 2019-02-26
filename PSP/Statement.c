@@ -54,7 +54,7 @@ NMS* Statement(enum token_kind first_token, char* first_name, RNL* leaveCurRNL, 
             }
             //*************************错误1：右括号多于左括号********************************
             if (sop->last == NULL) {
-                    errorfound(1);
+                    errorfound(TMRIGHT);
             }
             //********************************ERROR1**************************************
             sop = sop->last;//舍弃左括号
@@ -83,14 +83,14 @@ NMS* Statement(enum token_kind first_token, char* first_name, RNL* leaveCurRNL, 
                 push_list(&repol, FUNC, fun_name);
                 repol->APL = APL_cur;
                 if((repol->res_kind = check_registed(leaveCurRNL, fun_name, FUNCDEF, APL_cur)) == EMPTY_TOKEN){
-                    errorfound(1);//unregisted
+                    errorfound(UNREGISTED);//unregisted
                 }
                 token_buf = get_token();
             }
             else{
                 push_list(&repol, fun_buf, fun_name);
                 if((repol->res_kind = check_registed(leaveCurRNL, fun_name, EXTVARDEF, NULL)) == EMPTY_TOKEN){
-                    errorfound(1);//unregisted
+                    errorfound(UNREGISTED);//unregisted
                 }
             }
         }
@@ -101,14 +101,14 @@ NMS* Statement(enum token_kind first_token, char* first_name, RNL* leaveCurRNL, 
         }
         //**************************错误6：无法识别的输入**************************************
         else {
-            errorfound(6);
+            errorfound(SYNERR);
         }
         //**********************************ERROR6*****************************************
     }
     while (sop->last != NULL) {//符号压入repol
         //***********************错误2：左括号多于右括号************************************
         if (get_stack(&sop) == LP) {
-            errorfound(0);
+            errorfound(TMLEFT);
         }
         //******************************ERROR2******************************************
         push_list(&repol, pop_stack(&sop), "\0");
@@ -155,11 +155,11 @@ NMS* geneNMS(REPOL** repol, NMS** sout){
                 NMS_cur->res_kind = NMS_cur->left->res_kind;
             }
             else{
-                errorfound(1);//左右操作数类型不符
+                errorfound(DIFFOP);//左右操作数类型不符
             }
             if(order_operator(NMS_cur->NM_kind) == 14){
                 if(NMS_cur->left->NM_kind != IDENT){
-                    errorfound(1);//assign is only for ident
+                    errorfound(ASSIGNERR);//assign is only for ident
                 }
             }
             NMS* sout_buf = (*sout);
@@ -288,7 +288,7 @@ IFTH* ifState(RNL* leaveFunRNL, RNL* rootFunRNL){
         }
     }
     else{
-        errorfound(0);// invalid if statement
+        errorfound(SYNERR);// invalid if statement
     }
     return IFTH_cur;
 }
@@ -321,7 +321,7 @@ RTS* returnState(RNL* leaveFunRNL, RNL* rootFunRNL){
     //注意return不支持复合语句
     RTS_cur->NMS = Statement(token_buf, name_buf, leaveFunRNL, rootFunRNL);
     if(RTS_cur->NMS->res_kind != rootFunRNL->value_type){
-        errorfound(3);//wrong return type
+        errorfound(RETERR);//wrong return type
     }
     return RTS_cur;
 }
@@ -351,7 +351,7 @@ WHILETH* whileState(RNL* leaveFunRNL, RNL* rootFunRNL){
         }
     }
     else{
-        errorfound(0);// invalid if statement
+        errorfound(SYNERR);// invalid if statement
     }
     return WHILETH_cur;
 }
@@ -388,7 +388,7 @@ FORTH* forState(RNL* leaveFunRNL, RNL* rootFunRNL){
         }
     }
     else{
-        errorfound(0);// invalid if statement
+        errorfound(SYNERR);// invalid if statement
     }
     return FORTH_cur;
 }
@@ -471,7 +471,7 @@ COMPS* instantState(enum token_kind token_buf ,char* name_buf, RNL* leaveFunRNL,
             cur_COMPS->next->COMP_kind = ENDOFSTA;
         }
         else{
-            errorfound(0);//else without if
+            errorfound(ELSEONLY);//else without if
         }
     }
     else if(token_buf == FOR){

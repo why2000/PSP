@@ -19,7 +19,11 @@ extern char token_name[MAX_TOKEN_SIZE];//"main.c"
 extern FILE* read_fp;//"main.c"
 extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
+extern ANNOTATIONS* Annotations;
+extern PRECOMPILES* Precompiles;
 
+
+//写了再说，谁知道用不用得上
 ////remove left spaces, return in heap
 //char* lstrip(const char* oristr) {
 //    //heap
@@ -87,10 +91,10 @@ enum token_kind get_token(void){
         cur_token = single_token(buf_ch);
         if(last_token == CHAR_CONST){
             if(token_name[index-1] != '\'' && buf_ch != '\''){
-                errorfound(0);//string not supported
+                errorfound(SYNERR);//string not supported
             }
             if(buf_ch == '\''){
-                errorfound(0);//empty char
+                errorfound(SYNERR);//empty char
             }
         }
         //limited cur to single token or empty
@@ -128,10 +132,82 @@ enum token_kind get_token(void){
                                 token_name[index+1] = '\0';
                                 return DIVIDEEQ;// /=
                             default:
-                                errorfound(0);//invalid operator
+                                errorfound(SYNERR);//invalid operator
+                        }
+                    case DIVIDE:
+                        if(last_token == DIVIDE){
+                            int ANN_index;
+                            int ANN_total = 0;
+                            while(1){
+                                char ANN_bufc = fgetc(read_fp);
+                                if(ANN_bufc == '\n'){
+                                    break;
+                                }
+                                ANN_total++;
+                            }
+                            fseek(read_fp, -(ANN_total+1), SEEK_CUR);
+                            Annotations->ANN_type = SINGLEANN;
+                            Annotations->ANN_string = (char*)malloc(sizeof(ANN_total));
+                            Annotations->line = line_num;
+                            for(ANN_index = 0; ANN_index < ANN_total; ANN_index++){
+                                char ann_bufc = fgetc(read_fp);
+                                Annotations->ANN_string[ANN_index] = ann_bufc;
+                            }
+                            Annotations->ANN_string[ANN_index] = '\0';
+                            Annotations->next = (ANNOTATIONS*)malloc(sizeof(ANNOTATIONS));
+                            Annotations = Annotations->next;
+                            Annotations->next = NULL;
+                            return get_token();
+                        }
+                    case PLUS:
+                        if(last_token == PLUS){
+                            return DBPLUS;
+                        }
+                        else{
+                            errorfound(SYNERR);
+                        }
+                    case MINUS:
+                        if(last_token == MINUS){
+                            return DBMINUS;
+                        }
+                        else{
+                            errorfound(SYNERR);
+                        }
+                    case MULTI:
+                        if(last_token == DIVIDE){
+                            int ANN_index;
+                            int ANN_total = 0;
+                            while(1){
+                                char ANN_bufc = fgetc(read_fp);
+                                if(ANN_bufc == '*'){
+                                    if((ANN_bufc = fgetc(read_fp)) == '/'){
+                                        ungetc('/', read_fp);
+                                        break;  
+                                    }
+                                }
+                                ANN_total++;
+                            }
+                            fseek(read_fp, -(ANN_total+1), SEEK_CUR);
+                            Annotations->ANN_type = MULTIANN;
+                            Annotations->ANN_string = (char*)malloc(sizeof(ANN_total));
+                            Annotations->line = line_num;
+                            for(ANN_index = 0; ANN_index < ANN_total; ANN_index++){
+                                char ann_bufc = fgetc(read_fp);
+                                Annotations->ANN_string[ANN_index] = ann_bufc;
+                            }
+                            Annotations->ANN_string[ANN_index] = '\0';
+                            fgetc(read_fp);
+                            fgetc(read_fp);
+                            Annotations->next = (ANNOTATIONS*)malloc(sizeof(ANNOTATIONS));
+                            Annotations = Annotations->next;
+                            Annotations->next = NULL;
+                            return get_token();
+                        }
+                        else{
+                            errorfound(SYNERR);
                         }
                     default:
-                        errorfound(0);//invalid operator
+                        errorfound(SYNERR);//invalid operator
                 }
             }
             else if(last_token == EMPTY_TOKEN){
@@ -236,7 +312,7 @@ enum token_kind get_token(void){
         else if(buf_ch == '\''){
             if(last_token == CHAR_CONST){
                 if(token_name[index-1] == '\''){
-                    errorfound(0);//empty char
+                    errorfound(SYNERR);//empty char
                 }
                 else{
                     //char should be returned in time
@@ -272,7 +348,7 @@ enum token_kind get_token(void){
                 cur_token = FLOAT_CONST;
             }
             else if(last_token == FLOAT_CONST){
-                errorfound(0);//invalid float
+                errorfound(SYNERR);//invalid float
             }
             else if(last_token == EMPTY_TOKEN){
                 cur_token = DOT;
@@ -339,6 +415,156 @@ enum token_kind get_token(void){
                 ungetc(buf_ch, read_fp);
                 return last_token;
             }
+        }
+        else if(buf_ch == '#'){
+            Precompiles->line = line_num;
+            char PC_bufc = fgetc(read_fp);
+            if(PC_bufc == 'i'){
+                if(fgetc(read_fp) == 'n'){
+                    if(fgetc(read_fp) == 'c'){
+                        if(fgetc(read_fp) == 'l'){
+                            if(fgetc(read_fp) == 'u'){
+                                if(fgetc(read_fp) == 'd'){
+                                    if(fgetc(read_fp) == 'e'){
+                                        while((PC_bufc = fgetc(read_fp)) == ' ' || PC_bufc == '\t'){
+                                            ;
+                                        }
+                                        Precompiles->PC_type = INCLUDE;
+                                        if(PC_bufc == '<'){
+                                            int PC_index;
+                                            for(PC_index = 0; 1; PC_index++){
+                                                PC_bufc = fgetc(read_fp);
+                                                if(PC_bufc == '>'){
+                                                    break;
+                                                }
+                                                else if(PC_bufc == '\n'){
+                                                    errorfound(SYNERR);
+                                                    break;
+                                                }
+                                                else{
+                                                    Precompiles->firstname[PC_index] = PC_bufc;
+                                                }
+                                            }
+                                            Precompiles->firstname[PC_index] = '\0';
+                                        }
+                                        else if(PC_bufc == '\"'){
+                                            int PC_index;
+                                            for(PC_index = 0; 1; PC_index++){
+                                                PC_bufc = fgetc(read_fp);
+                                                if(PC_bufc == '\"'){
+                                                    break;
+                                                }
+                                                else if(PC_bufc == '\n'){
+                                                    errorfound(SYNERR);
+                                                    break;
+                                                }
+                                                else{
+                                                    Precompiles->firstname[PC_index] = PC_bufc;
+                                                }
+                                            }
+                                            Precompiles->firstname[PC_index] = '\0';
+                                        }
+                                        while((PC_bufc = fgetc(read_fp)) != '\n'){
+                                            if(PC_bufc != ' ' && PC_bufc != '\t'){
+                                                errorfound(SYNERR);
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        errorfound(SYNERR);
+                                    }
+                                }
+                                else{
+                                    errorfound(SYNERR);
+                                }
+                            }
+                            else{
+                                errorfound(SYNERR);
+                            }
+                        }
+                        else{
+                            errorfound(SYNERR);
+                        }
+                    }
+                    else{
+                        errorfound(SYNERR);
+                    }
+                }
+                else{
+                    errorfound(SYNERR);
+                }
+            }
+            else if(PC_bufc == 'd'){
+                if(fgetc(read_fp) == 'e'){
+                    if(fgetc(read_fp) == 'f'){
+                        if(fgetc(read_fp) == 'i'){
+                            if(fgetc(read_fp) == 'n'){
+                                if(fgetc(read_fp) == 'e'){
+                                    if((PC_bufc = fgetc(read_fp)) == ' ' || PC_bufc == '\t'){
+                                        Precompiles->PC_type = DEFINE;
+                                        int PC_index = 0;
+                                        while((PC_bufc = fgetc(read_fp)) != ' ' && PC_bufc != '\t'){
+                                            if(PC_bufc == '\n'){
+                                                errorfound(SYNERR);
+                                                break;
+                                            }
+                                            Precompiles->firstname[PC_index] = PC_bufc;
+                                            PC_index++;
+                                        }
+                                        Precompiles->firstname[PC_index] = '\0';
+                                        ungetc(PC_bufc, read_fp);
+                                        while((PC_bufc = fgetc(read_fp)) == ' ' || PC_bufc == '\t' || PC_bufc == '\n'){
+                                            if(PC_bufc == '\n'){
+                                                ungetc('\n', read_fp);
+                                                errorfound(SYNERR);
+                                                break;
+                                            }
+                                        }
+                                        PC_index = 0;
+                                        ungetc(PC_bufc, read_fp);
+                                        while((PC_bufc = fgetc(read_fp)) != ' ' && PC_bufc != '\t' && PC_bufc != '\n'){
+                                            Precompiles->secondname[PC_index] = PC_bufc;
+                                            PC_index++;
+                                        }
+                                        Precompiles->secondname[PC_index] = '\0';
+                                        ungetc(PC_bufc, read_fp);
+                                        if(PC_bufc != '\n'){
+                                            while((PC_bufc = fgetc(read_fp)) != '\n'){
+                                                if(PC_bufc != ' ' && PC_bufc != '\t'){
+                                                    errorfound(SYNERR);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        errorfound(SYNERR);
+                                    }
+                                }
+                                else{
+                                    errorfound(SYNERR);
+                                }
+                            }
+                            else{
+                                errorfound(SYNERR);
+                            }
+                        }
+                        else{
+                            errorfound(SYNERR);
+                        }
+                    }
+                    else{
+                        errorfound(SYNERR);
+                    }
+                }
+                else{
+                    errorfound(SYNERR);
+                }
+            }
+            Precompiles->next = (PRECOMPILES*)malloc(sizeof(PRECOMPILES));
+            Precompiles = Precompiles->next;
+            Precompiles->next = NULL;
+            line_num += 1;
+            return get_token();
         }
         token_name[index+1] = '\0';
         last_token = cur_token;
@@ -659,7 +885,7 @@ enum token_kind check_registed(RNL* RNL_cur, char* var_name, enum struct_type va
                     return RNL_cur->value_type;
                 }
                 else{
-                    errorfound(1);//invalid var_type
+                    errorfound(INVALID);//invalid var_type
                 }
             }
         }
@@ -681,11 +907,12 @@ int search_RNL(RNL* RNL_cur_root, char* var_name){
 
 void clear_RNL(RNL* clear_root){
     clear_root = clear_root->next;
-    while(clear_root->var_type != ENDOFSTA){
-        if(clear_root->FPL->FP_kind != EMPTY_TOKEN){
-            free(clear_root->FPL);
-            clear_root->FPL = NULL;
-        }
+    while(clear_root != NULL && clear_root->var_type != ENDOFSTA){
+        //FPL在输出时已经free了
+//        if(clear_root->FPL->FP_kind != EMPTY_TOKEN){
+//            free(clear_root->FPL);
+//            clear_root->FPL = NULL;
+//        }
         RNL* buf_RNL = clear_root;
         clear_root = clear_root->next;
         free(buf_RNL);

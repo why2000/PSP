@@ -12,8 +12,12 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <unistd.h>
+#include <sys/types.h>
+
 
 //defines
+#define BUFFER_SIZE 32
 #define MAXLINE 1024
 #define MAX_TOKEN_NUM 1024
 #define MAX_TOKEN_SIZE 32
@@ -39,6 +43,7 @@ enum token_kind {
     RET,
     WHILE,
     FOR,
+    ANNOTATE,// //
     LB,// {
     RB,// }
     LP,// (
@@ -57,6 +62,8 @@ enum token_kind {
     DIVIDEEQ,// /=
     LOR,// ||
     LAND,// &&
+    DBPLUS,// ++
+    DBMINUS,// --
     XOR,// ^
     NOT,// !
     MOD,// %
@@ -85,8 +92,29 @@ enum struct_type {
     NORMSTA,
     FUNCSTA,
     ENDOFSTA,
-    STARTOFSTA
+    STARTOFSTA,
+    SINGLEANN,
+    MULTIANN,
+    INCLUDE,
+    DEFINE
 };
+
+
+typedef struct PRECOMPILES{
+    enum struct_type PC_type;
+    int line;
+    char firstname[MAX_TOKEN_SIZE];
+    char secondname[MAX_TOKEN_SIZE];
+    struct PRECOMPILES* next;
+}PRECOMPILES;
+
+typedef struct ANNOTATIONS{
+    enum struct_type ANN_type;
+    int line;
+    char* ANN_string;
+    struct ANNOTATIONS* next;
+}ANNOTATIONS;
+
 
 //每个函数解析过程中传入当前外部注册表与函数内部注册表
 //RegisteredNameList

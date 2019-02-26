@@ -9,6 +9,8 @@
 #pragma once
 
 #include "main.h"
+void PREoutput(PRECOMPILES*);
+void ANNoutput(ANNOTATIONS*);
 void EDLoutput(EDL*);
 void EVDoutput(EVD*);
 void EVNLoutput(EVNL*);

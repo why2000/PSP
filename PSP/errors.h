@@ -9,5 +9,5 @@
 #pragma once
 
 #include "main.h"
-enum errortype { SYNERR = 0, TMRIGHT, TMLEFT, UNREGISTED, REDUNDANT, INVALID, ABNOMALSYN, TMSYN, NOINPUT, TMDOTS};
+enum errortype { SYNERR = 0, TMRIGHT, TMLEFT, UNREGISTED, REDUNDANT, INVALID, DIFFOP, ASSIGNERR, ELSEONLY, RETERR};
 void* errorfound(enum errortype index);

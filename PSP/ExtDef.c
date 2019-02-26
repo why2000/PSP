@@ -12,11 +12,8 @@ extern char token_name[MAX_TOKEN_SIZE];//"main.c"
 extern FILE* read_fp;//"main.c"
 extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
-long dbugp = 0;
-int dbugi = 0;
 
 EDL* ExtDefList(void){
-    dbugi += 1;
     enum token_kind tk_cur;
     tk_cur = get_token();
     EDL* EDL_cur = (EDL*)malloc(sizeof(EDL));
@@ -44,7 +41,7 @@ EDL* ExtDefList(void){
         EDL_cur = ExtDefList();
     }
     else{
-        errorfound(0);//invalid ExtDef
+        errorfound(SYNERR);//invalid ExtDef
     }
 //    if(dbugi == 4){
 //        dbugp = (long)EDL_cur->ED->FUNCD->FUNCB->COMP->EVD->EVNL->next->next;
@@ -67,7 +64,7 @@ ED* ExtDef(enum token_kind kind_buf){
         strcpy(ED_name, token_name);
     }
     else{
-        errorfound(0);//invalid ED
+        errorfound(SYNERR);//invalid ED
     }
     token_buf = get_token();
     if(token_buf == LP){
@@ -106,7 +103,7 @@ ED* ExtDef(enum token_kind kind_buf){
         }
     }
     else{
-        errorfound(0);//invalid ED
+        errorfound(SYNERR);//invalid ED
     }
     return ED_cur;
 }

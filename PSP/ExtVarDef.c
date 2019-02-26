@@ -40,7 +40,7 @@ EVNL* ExtVarNameList(enum token_kind declare_kind, RNL** curleaveRNL, RNL* curro
             push_RNL(curleaveRNL, token_name, EXTVARDEF, declare_kind);
         }
         else{
-            errorfound(1);//has been registered
+            errorfound(REDUNDANT);//has been registered
         }
         token_buf = get_token();
         if(token_buf == COMMA){
@@ -53,7 +53,7 @@ EVNL* ExtVarNameList(enum token_kind declare_kind, RNL** curleaveRNL, RNL* curro
         }
     }
     else{
-        errorfound(0);//invalid EVD
+        errorfound(SYNERR);//invalid EVD
     }
     return NULL;
 }

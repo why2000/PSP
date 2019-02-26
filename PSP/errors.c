@@ -12,16 +12,20 @@ extern FILE* write_fp;//"main.c"
 extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
 extern int line_num;//"main.c"
+extern int ERROR_STATUS;
+extern int fpipe[2];
 
 //报错系统
 void* errorfound(enum errortype index) {//index为错误索引
     /**************************改动此函数时不要 删除 枚举类型中的任何项****************************/
     printf("ERROR!!!\n");
-    printf("Line %d:", line_num);
+    printf("Line %d:", line_num-1);
+    ERROR_STATUS = 1;
     switch (index) {
         case SYNERR:
             fprintf(write_fp, "语法错误:\n");
             fprintf(write_fp, "无法解析的符号!\n");
+            break;
         case TMRIGHT:
             fprintf(write_fp, "表达式解析失败:\n");
             fprintf(write_fp, "右括号过多!\n");
@@ -39,23 +43,31 @@ void* errorfound(enum errortype index) {//index为错误索引
             fprintf(write_fp, "相同代码块内存在重复声明!\n");
             break;
         case INVALID:
-            fprintf(write_fp, "程序错误:\n");
+            fprintf(write_fp, "语法错误:\n");
             fprintf(write_fp, "检测到无效类型!\n");
             break;
-        case ABNOMALSYN:
-            fprintf(write_fp, "无法识别的输入$$$\n");
-            fprintf(write_fp, "请检查运算式中是否混入字母或使用了中文括号\n");
+        case DIFFOP:
+            fprintf(write_fp, "表达式解析失败:\n");
+            fprintf(write_fp, "操作数类型错误!\n");
             break;
-        case TMSYN:
-            fprintf(write_fp, "错误的运算式%%%%%%\n");
+        case ASSIGNERR:
+            fprintf(write_fp, "表达式解析失败:\n");
+            fprintf(write_fp, "只能对变量进行赋值!\n");
             break;
-        case NOINPUT:
-            fprintf(write_fp, "无输入???\n");
+        case ELSEONLY:
+            fprintf(write_fp, "语法错误:\n");
+            fprintf(write_fp, "单独存在的ELSE语句\n");
             break;
-        case TMDOTS:
-            fprintf(write_fp, "检测到多重小数点...\n");
+        case RETERR:
+            fprintf(write_fp, "表达式解析失败:\n");
+            fprintf(write_fp, "函数返回值类型错误!\n");
             break;
+            
     }
-    fprintf(write_fp, "解析失败！\n");
+    close(fpipe[0]);
+    char child[BUFFER_SIZE];
+    write(fpipe[1], child, strlen(child) + 1); 
+    sleep(2);
+    exit(0);    
     return NULL;
 }

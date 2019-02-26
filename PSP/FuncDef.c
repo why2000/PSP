@@ -38,7 +38,7 @@ FUNCD* FuncDef(enum token_kind declare_kind, char* FUNC_name){
             strcpy(FUNCD_cur->FPL->FP_name, token_name);
         }
         else{
-            errorfound(0);//invalid FPL
+            errorfound(SYNERR);//invalid FPL
         }
         buf_token = get_token();
         if(buf_token == COMMA){
@@ -72,7 +72,7 @@ FUNCD* FuncDef(enum token_kind declare_kind, char* FUNC_name){
         rootFunRNL_buf->next = NULL;
     }
     else{
-        errorfound(0);//invalid FuncDef
+        errorfound(SYNERR);//invalid FuncDef
     }
     return FUNCD_cur;
 }
@@ -84,7 +84,7 @@ FPL* FormParaList(RNL** leaveFunRNL){
         FPL_cur->FP_kind = buf_token;
     }
     else{
-        errorfound(0);//invalid FPL
+        errorfound(SYNERR);//invalid FPL
     }
     buf_token = get_token();
     //形参表只会与形参表内部变量名冲突
@@ -98,7 +98,7 @@ FPL* FormParaList(RNL** leaveFunRNL){
         }
     }
     else{
-        errorfound(0);//invalid FPL
+        errorfound(SYNERR);//invalid FPL
     }
     buf_token = get_token();
     if(buf_token == COMMA){
@@ -109,7 +109,7 @@ FPL* FormParaList(RNL** leaveFunRNL){
         FPL_cur->next->FP_kind = EMPTY_TOKEN;
     }
     else{
-        errorfound(0);//invalid FPL
+        errorfound(SYNERR);//invalid FPL
     }
     return FPL_cur;
 }

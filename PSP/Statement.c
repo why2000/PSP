@@ -52,23 +52,65 @@ NMS* Statement(enum token_kind first_token, char* first_name, RNL* leaveCurRNL, 
             while ((get_stack(&sop) != LP) && (sop->last != NULL)) {
                 push_list(&repol, pop_stack(&sop), "\0");
             }
-            //*************************错误1：右括号多于左括号********************************
             if (sop->last == NULL) {
-                    errorfound(TMRIGHT);
+                    errorfound(TMRIGHT);//右括号多于左括号
             }
-            //********************************ERROR1**************************************
             sop = sop->last;//舍弃左括号
             //舍弃右括号
             token_buf = get_token();
         }
         //2.读取运算符
-        else if (check_operator(token_buf)) {//同级或高级运算符及其上方的全部运算符出栈压入repol，再将本身压入sop栈
+        else if (check_operator(token_buf) && !check_oneside(token_buf)) {//同级或高级运算符及其上方的全部运算符出栈压入repol，再将本身压入sop栈
             while (sop->last != NULL && compare_operator(get_stack(&sop), token_buf)) {
                 push_list(&repol, pop_stack(&sop), "\0");
             }
             if (token_buf == COMMA && (get_stack(&sop) == EMPTY_TOKEN))break;
             push_stack(&sop, token_buf);
             token_buf = get_token();
+        }
+        else if(check_oneside(token_buf)){//单目运算符先检测左右
+            if(token_buf == DBPLUS){
+                token_buf = get_token();
+                if(!check_bothside(token_buf)){
+                    while (sop->last != NULL && compare_operator(get_stack(&sop), LDBPLUS)) {
+                        push_list(&repol, pop_stack(&sop), "\0");
+                    }
+                    if(get_stack(&sop) == EMPTY_TOKEN)break;
+                    push_stack(&sop, LDBPLUS);
+                }
+                else{
+                    while (sop->last != NULL && compare_operator(get_stack(&sop), RDBPLUS)) {
+                        push_list(&repol, pop_stack(&sop), "\0");
+                    }
+                    if(get_stack(&sop) == EMPTY_TOKEN)break;
+                    push_stack(&sop, RDBPLUS);
+                }
+            }
+            else if(token_buf == DBMINUS){
+                token_buf = get_token();
+                if(!check_bothside(token_buf)){
+                    while (sop->last != NULL && compare_operator(get_stack(&sop), LDBMINUS)) {
+                        push_list(&repol, pop_stack(&sop), "\0");
+                    }
+                    if(get_stack(&sop) == EMPTY_TOKEN)break;
+                    push_stack(&sop, LDBMINUS);
+                }
+                else{
+                    while (sop->last != NULL && compare_operator(get_stack(&sop), RDBMINUS)) {
+                        push_list(&repol, pop_stack(&sop), "\0");
+                    }
+                    if(get_stack(&sop) == EMPTY_TOKEN)break;
+                    push_stack(&sop, RDBMINUS);
+                }
+            }
+            else{
+                while (sop->last != NULL && compare_operator(get_stack(&sop), token_buf)) {
+                    push_list(&repol, pop_stack(&sop), "\0");
+                }
+                if(get_stack(&sop) == EMPTY_TOKEN)break;
+                push_stack(&sop, token_buf);
+                token_buf = get_token();
+            }
         }
         else if(token_buf == IDENT) {
             enum token_kind fun_buf = token_buf;
@@ -99,18 +141,14 @@ NMS* Statement(enum token_kind first_token, char* first_name, RNL* leaveCurRNL, 
             repol->res_kind = check_const(token_buf);
             token_buf = get_token();
         }
-        //**************************错误6：无法识别的输入**************************************
         else {
-            errorfound(SYNERR);
+            errorfound(SYNERR);//未知符号
         }
-        //**********************************ERROR6*****************************************
     }
     while (sop->last != NULL) {//符号压入repol
-        //***********************错误2：左括号多于右括号************************************
         if (get_stack(&sop) == LP) {
-            errorfound(TMLEFT);
+            errorfound(TMLEFT);//左括号多于右括号
         }
-        //******************************ERROR2******************************************
         push_list(&repol, pop_stack(&sop), "\0");
     }
     push_list(&repol, EMPTY_TOKEN, "\0");//逆波兰栈写入完成
@@ -132,34 +170,98 @@ NMS* geneNMS(REPOL** repol, NMS** sout){
             //链表转向
             NMS* NMS_cur = (NMS*)malloc(sizeof(NMS));
             NMS_cur->NM_kind = (*repol)->token_kind;
-            //此处不会泄露，next与last均已被横向链表引用
-            NMS_cur->right = pop_out(sout);
-            NMS_cur->right->next = (NMS*)malloc(sizeof(NMS));
-            NMS_cur->right->next->NM_kind = EMPTY_TOKEN;
-            NMS_cur->right->next->res_kind = EMPTY_TOKEN;
-            NMS_cur->right->last = (NMS*)malloc(sizeof(NMS));
-            NMS_cur->right->last->NM_kind = EMPTY_TOKEN;
-            NMS_cur->right->last->res_kind = EMPTY_TOKEN;
-            //注意赋值系列的左操作符
-            NMS_cur->left = pop_out(sout);
-            NMS_cur->left->next = (NMS*)malloc(sizeof(NMS));
-            NMS_cur->left->next->NM_kind = EMPTY_TOKEN;
-            NMS_cur->left->next->res_kind = EMPTY_TOKEN;
-            NMS_cur->left->last = (NMS*)malloc(sizeof(NMS));
-            NMS_cur->left->last->NM_kind = EMPTY_TOKEN;
-            NMS_cur->left->last->res_kind = EMPTY_TOKEN;
+            if(check_oneside(NMS_cur->NM_kind)){
+                if(NMS_cur->NM_kind == RDBPLUS || NMS_cur->NM_kind == RDBMINUS){
+                    NMS_cur->left = pop_out(sout);
+                    NMS_cur->left->next = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->left->next->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->left->next->res_kind = EMPTY_TOKEN;
+                    NMS_cur->left->last = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->left->last->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->left->last->res_kind = EMPTY_TOKEN;
+                    NMS_cur->right = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->right->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->right->res_kind = EMPTY_TOKEN;
+                    NMS_cur->right = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->right->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->right->res_kind = EMPTY_TOKEN;
+                    NMS_cur->res_kind = NMS_cur->left->res_kind;
+                    if(NMS_cur->left->NM_kind != IDENT){
+                        errorfound(ASSIGNERR);//特殊操作符只能作用于左值表达式
+                    }
+                }
+                else if(NMS_cur->NM_kind == LDBPLUS || NMS_cur->NM_kind == LDBMINUS){
+                    NMS_cur->right = pop_out(sout);
+                    NMS_cur->right->next = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->right->next->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->right->next->res_kind = EMPTY_TOKEN;
+                    NMS_cur->right->last = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->right->last->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->right->last->res_kind = EMPTY_TOKEN;
+                    NMS_cur->left = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->left->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->left->res_kind = EMPTY_TOKEN;
+                    NMS_cur->left = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->left->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->left->res_kind = EMPTY_TOKEN;
+                    NMS_cur->res_kind = NMS_cur->right->res_kind;
+                    if(NMS_cur->right->NM_kind != IDENT){
+                        errorfound(ASSIGNERR);//特殊操作符只能作用于左值表达式
+                    }
+                }
+                else if(NMS_cur->NM_kind == NOT || NMS_cur->NM_kind == REVERSE){
+                    NMS_cur->right = pop_out(sout);
+                    NMS_cur->right->next = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->right->next->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->right->next->res_kind = EMPTY_TOKEN;
+                    NMS_cur->right->last = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->right->last->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->right->last->res_kind = EMPTY_TOKEN;
+                    NMS_cur->left = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->left->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->left->res_kind = EMPTY_TOKEN;
+                    NMS_cur->left = (NMS*)malloc(sizeof(NMS));
+                    NMS_cur->left->NM_kind = EMPTY_TOKEN;
+                    NMS_cur->left->res_kind = EMPTY_TOKEN;
+                    NMS_cur->res_kind = NMS_cur->right->res_kind;
+                }
+                else{
+                    errorfound(ERRONESIDE);//单目运算符只有一侧能取值
+                }
+                
+            }else{
+                //此处不会泄露，next与last均已被横向链表引用
+                NMS_cur->right = pop_out(sout);
+                NMS_cur->right->next = (NMS*)malloc(sizeof(NMS));
+                NMS_cur->right->next->NM_kind = EMPTY_TOKEN;
+                NMS_cur->right->next->res_kind = EMPTY_TOKEN;
+                NMS_cur->right->last = (NMS*)malloc(sizeof(NMS));
+                NMS_cur->right->last->NM_kind = EMPTY_TOKEN;
+                NMS_cur->right->last->res_kind = EMPTY_TOKEN;
+                //注意赋值系列的左操作符
+                NMS_cur->left = pop_out(sout);
+                NMS_cur->left->next = (NMS*)malloc(sizeof(NMS));
+                NMS_cur->left->next->NM_kind = EMPTY_TOKEN;
+                NMS_cur->left->next->res_kind = EMPTY_TOKEN;
+                NMS_cur->left->last = (NMS*)malloc(sizeof(NMS));
+                NMS_cur->left->last->NM_kind = EMPTY_TOKEN;
+                NMS_cur->left->last->res_kind = EMPTY_TOKEN;
+                if((NMS_cur->left->res_kind == NMS_cur->right->res_kind) && (NMS_cur->left->res_kind != EMPTY_TOKEN)){
+                    NMS_cur->res_kind = NMS_cur->left->res_kind;
+                }
+                else{
+                    errorfound(DIFFOP);//左右操作数类型不符
+                }
+            }
+            if(NMS_cur->NM_kind == DOT || NMS_cur->NM_kind == CHOOSE){
+                errorfound(UNSUPPORTEDYET);
+            }
             if(check_bool(NMS_cur->NM_kind)){
                 NMS_cur->res_kind = INT;
             }
-            else if((NMS_cur->left->res_kind == NMS_cur->right->res_kind) && (NMS_cur->left->res_kind != EMPTY_TOKEN)){
-                NMS_cur->res_kind = NMS_cur->left->res_kind;
-            }
-            else{
-                errorfound(DIFFOP);//左右操作数类型不符
-            }
             if(order_operator(NMS_cur->NM_kind) == 14){
                 if(NMS_cur->left->NM_kind != IDENT){
-                    errorfound(ASSIGNERR);//assign is only for ident
+                    errorfound(ASSIGNERR);//只能对左值表达式赋值
                 }
             }
             NMS* sout_buf = (*sout);

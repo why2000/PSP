@@ -51,6 +51,9 @@ EVNL* ExtVarNameList(enum token_kind declare_kind, RNL** curleaveRNL, RNL* curro
             EVNL_cur->next = ExtVarNameList(EMPTY_TOKEN, curleaveRNL, currootRNL);
             return EVNL_cur;
         }
+        else{
+            errorfound(SYNERR);
+        }
     }
     else{
         errorfound(SYNERR);//invalid EVD

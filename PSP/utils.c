@@ -206,6 +206,14 @@ enum token_kind get_token(void){
                         else{
                             errorfound(SYNERR);
                         }
+                    case GT:
+                        if(last_token == MINUS){
+                            token_name[index+1] = '\0';
+                            return CHOOSE;// ->
+                        }
+                        else{
+                            errorfound(SYNERR);
+                        }
                     default:
                         errorfound(SYNERR);//invalid operator
                 }
@@ -469,6 +477,7 @@ enum token_kind get_token(void){
                                                 errorfound(SYNERR);
                                             }
                                         }
+                                        ungetc('\n', read_fp);
                                     }
                                     else{
                                         errorfound(SYNERR);
@@ -534,6 +543,7 @@ enum token_kind get_token(void){
                                                     errorfound(SYNERR);
                                                 }
                                             }
+                                            ungetc('\n', read_fp);
                                         }
                                     }
                                     else{
@@ -563,7 +573,6 @@ enum token_kind get_token(void){
             Precompiles->next = (PRECOMPILES*)malloc(sizeof(PRECOMPILES));
             Precompiles = Precompiles->next;
             Precompiles->next = NULL;
-            line_num += 1;
             return get_token();
         }
         token_name[index+1] = '\0';
@@ -609,6 +618,10 @@ enum token_kind single_token(char buf_ch){
             return BOR;
         case '&':
             return BAND;
+        case '.':
+            return DOT;
+        case '~':
+            return REVERSE;
         default:
             return EMPTY_TOKEN;
     }
@@ -703,6 +716,36 @@ void to_string(enum token_kind tk, char* out_string){
         case COMMA:
             strcpy(out_string, ",");
             break;
+        case DBPLUS:
+            strcpy(out_string, "++");
+            break;
+        case DBMINUS:
+            strcpy(out_string, "--");
+            break;
+        case DOT:
+            strcpy(out_string, ".");
+            break;
+        case CHOOSE:
+            strcpy(out_string, "->");
+            break;
+        case NOT:
+            strcpy(out_string, "!");
+            break;
+        case REVERSE:
+            strcpy(out_string, "~");
+            break;
+        case RDBMINUS:
+            strcpy(out_string, "IDENT--");
+            break;
+        case LDBMINUS:
+            strcpy(out_string, "--IDENT");
+            break;
+        case RDBPLUS:
+            strcpy(out_string, "IDENT++");
+            break;
+        case LDBPLUS:
+            strcpy(out_string, "++IDENT");
+            break;
         default:
             errorfound(INVALID);//invalid type
     }
@@ -721,11 +764,28 @@ int is_number(char buf_ch){
     return 0;
 }
 
-//check whether token is single
+//单字节运算符
 int check_single(enum token_kind tk){
     if (tk >= XOR) return 1;
     return 0;
 }
+
+//单目运算符
+int check_oneside(enum token_kind tk){
+    if (tk == NOT || tk == DBPLUS || tk == DBMINUS || tk == LDBPLUS || tk == RDBPLUS || tk == LDBMINUS || tk == RDBMINUS || tk == NOT || tk == REVERSE) return 1;
+    return 0;
+}
+
+int check_special(enum token_kind tk){
+    if(tk == LP || tk == RP || tk == LB || tk == RB || tk == SEMI || tk == COMMA)return 1;
+    return 0;
+}
+
+int check_bothside(enum token_kind tk){
+    if(check_operator(tk) && !check_oneside(tk) && !check_special(tk))return 1;
+    return 0;
+}
+
 
 int check_const(enum token_kind tk){
     if(tk == INT_CONST)return INT;
@@ -747,12 +807,6 @@ int check_bool(enum token_kind tk){
             ;
         case NEQ:
             ;
-        case BAND:
-            ;
-        case XOR:
-            ;
-        case BOR:    
-            ;
         case LAND:
             ;
         case LOR: 
@@ -772,6 +826,26 @@ int check_operator(enum token_kind tk){
 
 int order_operator(enum token_kind tk){
     switch (tk) {
+        case DOT:
+            ;
+        case CHOOSE:
+            return 1;
+        case RDBPLUS:
+            ;
+        case RDBMINUS:
+            ;
+        case LDBPLUS:
+            ;
+        case LDBMINUS:
+            ;
+        case DBPLUS:
+            ;
+        case DBMINUS:
+            ;
+        case REVERSE:
+            ;
+        case NOT:
+            return 2;
         case DIVIDE:
             ;
         case MULTI:

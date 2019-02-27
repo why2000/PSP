@@ -13,13 +13,13 @@ extern RNL* rootRNL;//"main.c"
 extern RNL* leaveRNL;//"main.c"
 extern int line_num;//"main.c"
 extern int ERROR_STATUS;
-extern int fpipe[2];
+extern int* fpipe;
 
 //报错系统
 void* errorfound(enum errortype index) {//index为错误索引
     /**************************改动此函数时不要 删除 枚举类型中的任何项****************************/
-    printf("ERROR!!!\n");
-    printf("Line %d:", line_num-1);
+    fprintf(write_fp, "ERROR!!!\n");
+    fprintf(write_fp, "Line %d:", line_num);
     ERROR_STATUS = 1;
     switch (index) {
         case SYNERR:
@@ -52,7 +52,7 @@ void* errorfound(enum errortype index) {//index为错误索引
             break;
         case ASSIGNERR:
             fprintf(write_fp, "表达式解析失败:\n");
-            fprintf(write_fp, "只能对变量进行赋值!\n");
+            fprintf(write_fp, "左值操作符作用于非左值表达式!\n");
             break;
         case ELSEONLY:
             fprintf(write_fp, "语法错误:\n");
@@ -62,12 +62,22 @@ void* errorfound(enum errortype index) {//index为错误索引
             fprintf(write_fp, "表达式解析失败:\n");
             fprintf(write_fp, "函数返回值类型错误!\n");
             break;
+        case UNSUPPORTEDYET:
+            fprintf(write_fp, "表达式解析失败:\n");
+            fprintf(write_fp, "暂不支持的操作符!\n");
+            break;
+        case ERRONESIDE:
+            fprintf(write_fp, "表达式解析失败:\n");
+            fprintf(write_fp, "单目运算符仅有一侧均可取值!\n");
+            break;
             
     }
     close(fpipe[0]);
-    char child[BUFFER_SIZE];
+    char child[BUFFER_SIZE] = "1";
     write(fpipe[1], child, strlen(child) + 1); 
     sleep(2);
+    fclose(read_fp);
+    fflush(write_fp);
     exit(0);    
     return NULL;
 }

@@ -15,16 +15,22 @@
 #include"main.h"
 ulong line_num;
 char token_name[MAX_TOKEN_SIZE];
-//全局链表可以用NULL检测首尾
-RNL* rootRNL;
-RNL* leaveRNL;
 FILE* read_fp;
 FILE* write_fp;
+//注册表及其他非语法树内容都是全局链表，可以用NULL检测首尾
+RNL* rootRNL;
+RNL* leaveRNL;
+//注释信息
 ANNOTATIONS* Annotations;
+//预编译信息
 PRECOMPILES* Precompiles;
+//if标志(刚结束if，可以else)
 int IF_STATUS;
+//条件表达式标志(for/while/if)
 int JUDGE_STATUS;
+//错误标志（已废弃）
 int ERROR_STATUS;
+//管道
 int* fpipe; 
 
 int main(int argc, char* argv[]) {
@@ -35,29 +41,31 @@ int main(int argc, char* argv[]) {
     int totalnum = 0;
     for(index = 1; index < argc; index++){
         write_fp = stdout;
-        if(strcmp(argv[index], "-o") == 0 || strcmp(argv[index], "-output") == 0 ){
+        if(strcmp(argv[index], "-o") == 0 || strcmp(argv[index], "--output") == 0 ){
             index++;
             if((write_fp = fopen(argv[index], "w")) == NULL){
                 printf("Error! Failed to open output file.\n");
                 return 1;
             }
-            
             break;
         }
         totalnum++;
     }
     for (index = 1; index <= totalnum; index++){
+//        anastart(argv[index]);//debug
         int ret = pipe(fpipe); 
         if (ret == -1) { 
             perror("pipe error\n"); 
             return 1; 
         }
+        //这里冲一下缓冲区，防止子进程输出缓冲区导致加倍输出
+        //逻辑: 第一次fork->子进程1缓冲->子进程1exit输出->父进程缓冲句子A->第二次fork->子进程2缓冲句子B->子进程2exit输出AB->父进程fclose输出A->得到ABA
+        fflush(write_fp);
         pid_t id = fork(); 
         if (id == 0) 
         {
             close(fpipe[0]);
             int buf_result = anastart(argv[index]);
-//            printf("childres:%d\n",buf_result);
             if(buf_result == 0){
                 char* child = "0";
                 write(fpipe[1], child, strlen(child) + 1); 
@@ -72,40 +80,59 @@ int main(int argc, char* argv[]) {
             }
         }
         else if (id>0) {
-            wait(0);
+            sleep(5000);
             close(fpipe[1]);  
             char msg[100];  
             memset(msg,'\0',sizeof(msg));  
-            ssize_t s  =  read(fpipe[0],  msg,  sizeof(msg));    
-            if(s>0)    
+            ssize_t s  =  read(fpipe[0],  msg,  sizeof(msg));
+            if(s>0)
             {  
                 msg[s - 1]  =  '\0';    
-            }    
+            }
             if(strcmp(msg, "0") == 0){
                 mainstatus[index] = 0;
             }
             else{
                 mainstatus[index] = 1;
             }
+            if (mainstatus[index] == 0){
+                fprintf(write_fp, "Result: %s successfully analyzed!\n", argv[index]);
+            }else{
+                failsum++;
+                fprintf(write_fp, "Result: Failed to analyze %s!\n", argv[index]);
+            }
+            //调研加倍输出的问题，原因是子进程把缓冲区输出了
+//            FILE* p1 = NULL;
+//            FILE* p2 = NULL;
+//            FILE* p3 = NULL;
+//            if(fopen("p1p.txt", "r") != NULL){
+//                if(fopen("./p2p.txt", "r") != NULL){
+//                    p3 = fopen("./p3p.txt", "w");
+//                }else{
+//                    p2 = fopen("./p2p.txt", "w");
+//                }
+//            }
+//            else{
+//                p1 = fopen("p1p.txt", "w");
+//            }
+//            if(p1)fprintf(p1,"0");
+//            if(p2)fprintf(p2,"0");
+//            if(p3)fprintf(p3,"0");
         } 
         else {
             perror("fork error\n");
             return 2; 
         }
-        if (mainstatus[index] == 0){
-            fprintf(write_fp, "Result: %s successful analyzed!\n", argv[index]);
-        }else{
-            failsum++;
-            fprintf(write_fp, "Result: Failed to analyze %s!\n", argv[index]);
-        }
+        
     }
     fprintf(write_fp, "Analysis finished for %d files, %d succeeded, %d failed!\n", totalnum, (totalnum-failsum), failsum);
     if(totalnum < argc - 1 && write_fp != NULL){
-        printf("Results are saved in %s.", argv[totalnum+2]);
+        printf("Results are saved in %s.\n", argv[totalnum+2]);
     }
     if(write_fp != stdout){
         fclose(write_fp);
     }
+    
     free(mainstatus);
     mainstatus = NULL;
 }
@@ -138,7 +165,9 @@ int anastart(const char* filename){
     leaveRNL = rootRNL;
     fprintf(write_fp, "文件\"%s\"语法解析结果:\n", filename);
     Annotations = (ANNOTATIONS*)malloc(sizeof(ANNOTATIONS));
+    Annotations->next = NULL;
     Precompiles = (PRECOMPILES*)malloc(sizeof(PRECOMPILES));
+    Precompiles->next = NULL;
     PRECOMPILES* Precompiles_root = Precompiles;
     ANNOTATIONS* Annotations_root = Annotations;
     EDL* EDL_cur = ExtDefList();
@@ -155,6 +184,7 @@ int anastart(const char* filename){
     }else{
         ana_status = 1;
     }
+    fflush(write_fp);
     fclose(read_fp);
     return ana_status;
 }

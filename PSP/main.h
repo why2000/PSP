@@ -51,6 +51,7 @@ enum token_kind {
     SEMI,// ;
     COMMA,// ,
     DOT,// .
+    CHOOSE,// ->
     GEQ,// >=
     LEQ,// <=
     EQ,// ==
@@ -63,9 +64,15 @@ enum token_kind {
     LOR,// ||
     LAND,// &&
     DBPLUS,// ++
+    LDBPLUS,// ++a
+    RDBPLUS,// a++
     DBMINUS,// --
+    LDBMINUS,// --a
+    RDBMINUS,// a--
+    //XOR位置不要动，单字节加在XOR后面
     XOR,// ^
     NOT,// !
+    REVERSE,// ~
     MOD,// %
     BOR,// |
     BAND,// &

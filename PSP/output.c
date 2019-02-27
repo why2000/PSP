@@ -107,20 +107,19 @@ void EVDoutput(EVD* curEVD){
     tab_number += 1;
     EVNLoutput(curEVD->EVNL);
     tab_number -= 1;
-    ///
-    free(curEVD);
+//    free(curEVD);
     return;
 }
 
 void EVNLoutput(EVNL* curEVNL){
     if(strcmp(curEVNL->var_name, "###") == 0){
-        free(curEVNL);
+//        free(curEVNL);
         return;
     }
     tab_print();
     fprintf(write_fp, "变量名: %s\n", curEVNL->var_name);
     EVNLoutput(curEVNL->next);
-    free(curEVNL);
+//    free(curEVNL);
     curEVNL = NULL;
     return;
 }
@@ -141,7 +140,7 @@ void FUNCDoutput(FUNCD* curFUNCD){
     fprintf(write_fp, "复合语句:\n");
     tab_number += 1;
     COMPSoutput(curFUNCD->FUNCB);
-    free(curFUNCD);
+//    free(curFUNCD);
     tab_number -= 1;
     return;
 }
@@ -165,7 +164,7 @@ void COMPSoutput(COMPS* curCOMPS){
             fprintf(write_fp, "复合语句的变量定义:\n");
             tab_number += 1;
             EVDoutput(curCOMPS->COMP->EVD);
-            free(curCOMPS->COMP);
+//            free(curCOMPS->COMP);
             tab_number -= 1;
         }
         else if(curCOMPS->COMP_kind == RETURNSTA){
@@ -173,9 +172,9 @@ void COMPSoutput(COMPS* curCOMPS){
             fprintf(write_fp, "返回语句:\n");
             tab_number += 1;
             NMSoutput(curCOMPS->COMP->STA->RTS->NMS);
-            free(curCOMPS->COMP->STA->RTS);
-            free(curCOMPS->COMP->STA);
-            free(curCOMPS->COMP);
+//            free(curCOMPS->COMP->STA->RTS);
+//            free(curCOMPS->COMP->STA);
+//            free(curCOMPS->COMP);
             tab_number -= 1;
         }
         else if(curCOMPS->COMP_kind == IFSTA){
@@ -194,9 +193,9 @@ void COMPSoutput(COMPS* curCOMPS){
                 COMPSoutput(curCOMPS->COMP->STA->IFTH->IFCOMPS);
                 tab_number -= 1;
                 //注意这里少一个-1留给else
-                free(curCOMPS->COMP->STA->IFTH);
-                free(curCOMPS->COMP->STA);
-                free(curCOMPS->COMP);
+//                free(curCOMPS->COMP->STA->IFTH);
+//                free(curCOMPS->COMP->STA);
+//                free(curCOMPS->COMP);
             }else{
                 tab_print();
                 fprintf(write_fp, "IF-THEN语句:\n");
@@ -212,9 +211,9 @@ void COMPSoutput(COMPS* curCOMPS){
                 COMPSoutput(curCOMPS->COMP->STA->IFTH->IFCOMPS);
                 tab_number -= 1;
                 tab_number -= 1;
-                free(curCOMPS->COMP->STA->IFTH);
-                free(curCOMPS->COMP->STA);
-                free(curCOMPS->COMP);
+//                free(curCOMPS->COMP->STA->IFTH);
+//                free(curCOMPS->COMP->STA);
+//                free(curCOMPS->COMP);
             }
         }
         else if(curCOMPS->COMP_kind == ELSESTA){
@@ -224,9 +223,9 @@ void COMPSoutput(COMPS* curCOMPS){
             COMPSoutput(curCOMPS->COMP->STA->ELTH->ELSECOMPS);
             tab_number -= 1;
             tab_number -= 1;
-            free(curCOMPS->COMP->STA->ELTH);
-            free(curCOMPS->COMP->STA);
-            free(curCOMPS->COMP);
+//            free(curCOMPS->COMP->STA->ELTH);
+//            free(curCOMPS->COMP->STA);
+//            free(curCOMPS->COMP);
         }
         else if(curCOMPS->COMP_kind == WHILESTA){
             tab_print();
@@ -243,9 +242,9 @@ void COMPSoutput(COMPS* curCOMPS){
             COMPSoutput(curCOMPS->COMP->STA->WHILETH->WHILECOMPS);
             tab_number -= 1;
             tab_number -= 1;
-            free(curCOMPS->COMP->STA->WHILETH);
-            free(curCOMPS->COMP->STA);
-            free(curCOMPS->COMP);
+//            free(curCOMPS->COMP->STA->WHILETH);
+//            free(curCOMPS->COMP->STA);
+//            free(curCOMPS->COMP);
         }
         else if(curCOMPS->COMP_kind == FORSTA){
             tab_print();
@@ -272,9 +271,9 @@ void COMPSoutput(COMPS* curCOMPS){
             COMPSoutput(curCOMPS->COMP->STA->FORTH->FORCOMPS);
             tab_number -= 1;
             tab_number -= 1;
-            free(curCOMPS->COMP->STA->FORTH);
-            free(curCOMPS->COMP->STA);
-            free(curCOMPS->COMP);
+//            free(curCOMPS->COMP->STA->FORTH);
+//            free(curCOMPS->COMP->STA);
+//            free(curCOMPS->COMP);
         }
         else if(curCOMPS->COMP_kind == NORMSTA){
             tab_print();
@@ -282,12 +281,12 @@ void COMPSoutput(COMPS* curCOMPS){
             tab_number += 1;
             NMSoutput(curCOMPS->COMP->STA->NMS);
             tab_number -= 1;
-            free(curCOMPS->COMP->STA);
-            free(curCOMPS->COMP);
+//            free(curCOMPS->COMP->STA);
+//            free(curCOMPS->COMP);
         }
         curCOMPS = buf_COMPS->next;
         //free的上个curCOMPS
-        free(buf_COMPS);
+//        free(buf_COMPS);
     }
     return;
 }
@@ -345,21 +344,41 @@ void NMSoutput(NMS* curNMS){
         tab_print();
         to_string(curNMS->NM_kind, buf_string);
         fprintf(write_fp, "运算符: %s\n", buf_string);
-        tab_number += 1;
-        tab_print();
-        fprintf(write_fp, "左操作符: \n");
-        tab_number += 1;
-        NMSoutput(curNMS->left);
-        tab_number -= 1;
-        tab_print();
-        fprintf(write_fp, "右操作符: \n");
-        tab_number += 1;
-        NMSoutput(curNMS->right);
-        tab_number -= 1;
-        tab_number -= 1;
+        if(curNMS->NM_kind == RDBPLUS || curNMS->NM_kind == RDBMINUS){
+            tab_number += 1;
+            tab_print();
+            fprintf(write_fp, "左操作符: \n");
+            tab_number += 1;
+            NMSoutput(curNMS->left);
+            tab_number -= 1;
+            tab_number -= 1;
+        }
+        else if(curNMS->NM_kind == LDBPLUS || curNMS->NM_kind == LDBMINUS || curNMS->NM_kind == NOT || curNMS->NM_kind == REVERSE){
+            tab_number += 1;
+            tab_print();
+            fprintf(write_fp, "右操作符: \n");
+            tab_number += 1;
+            NMSoutput(curNMS->right);
+            tab_number -= 1;
+            tab_number -= 1;
+        }
+        else{
+            tab_number += 1;
+            tab_print();
+            fprintf(write_fp, "左操作符: \n");
+            tab_number += 1;
+            NMSoutput(curNMS->left);
+            tab_number -= 1;
+            tab_print();
+            fprintf(write_fp, "右操作符: \n");
+            tab_number += 1;
+            NMSoutput(curNMS->right);
+            tab_number -= 1;
+            tab_number -= 1;
+        }
         tab_number -= 1;
     }
-    free(curNMS);
+//    free(curNMS);
     return;
 }
 
@@ -374,7 +393,7 @@ void APLoutput(APL* curAPL){
     NMSoutput(curAPL->NMS);
     tab_number -= 1;
     APLoutput(curAPL->next);
-    free(curAPL);
+//    free(curAPL);
     return;
 }
 

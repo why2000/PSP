@@ -489,17 +489,33 @@ void NMSoutput(NMS* curNMS){
             tab_number += 1;
             tab_print();
             fprintf(write_fp, "左操作符: \n");
-            fprintf(formatter_fp, "(");
-            tab_number += 1;
-            NMSoutput(curNMS->left);
-            tab_number -= 1;
-            fprintf(formatter_fp, ") %s (", buf_string);
+            if(check_const(curNMS->left->NM_kind) || curNMS->left->NM_kind == IDENT){
+                tab_number += 1;
+                NMSoutput(curNMS->left);
+                tab_number -= 1;
+            }
+            else{
+                fprintf(formatter_fp, "(");
+                tab_number += 1;
+                NMSoutput(curNMS->left);
+                tab_number -= 1;
+                fprintf(formatter_fp, ")");
+            }
+            fprintf(formatter_fp, " %s ", buf_string);
             tab_print();
             fprintf(write_fp, "右操作符: \n");
-            tab_number += 1;
-            NMSoutput(curNMS->right);
-            tab_number -= 1;
-            fprintf(formatter_fp, ")");
+            if(check_const(curNMS->right->NM_kind) || curNMS->right->NM_kind == IDENT){
+                tab_number += 1;
+                NMSoutput(curNMS->right);
+                tab_number -= 1;
+            }
+            else{
+                fprintf(formatter_fp, "(");
+                tab_number += 1;
+                NMSoutput(curNMS->right);
+                tab_number -= 1;
+                fprintf(formatter_fp, ")");
+            }
             tab_number -= 1;
         }
         tab_number -= 1;

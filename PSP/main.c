@@ -7,7 +7,7 @@
 //
 
 //记得在所有errorfound(0);之前free所有函数中创建的堆
-//2.23晚:理论上实现了类型不一致检测（未测试）
+//2.23晚:实现了类型不一致检测
 //2.24晚:注意栈链表一定要保证前后各有一空位，否则会导致NULL指针在栈释放后被覆盖写入值，无法检测首尾
 //2.25晚:实现了单目运算符/宏定义
 //2.26晚:实现了多进程，报错时无需free
@@ -17,6 +17,7 @@ ulong line_num;
 char token_name[MAX_TOKEN_SIZE];
 FILE* read_fp;
 FILE* write_fp;
+FILE* formatter_fp;
 //注册表及其他非语法树内容都是全局链表，可以用NULL检测首尾
 RNL* rootRNL;
 RNL* leaveRNL;
@@ -51,6 +52,10 @@ int main(int argc, char* argv[]) {
         }
         totalnum++;
     }
+    if((formatter_fp = fopen("./new.c", "w")) == NULL){
+        printf("Error! Failed to open %s.\n", "./new.c");
+        return 1;
+    }
     for (index = 1; index <= totalnum; index++){
 //        anastart(argv[index]);//debug
         int ret = pipe(fpipe); 
@@ -61,6 +66,7 @@ int main(int argc, char* argv[]) {
         //这里冲一下缓冲区，防止子进程输出缓冲区导致加倍输出
         //逻辑: 第一次fork->子进程1缓冲->子进程1exit输出->父进程缓冲句子A->第二次fork->子进程2缓冲句子B->子进程2exit输出AB->父进程fclose输出A->得到ABA
         fflush(write_fp);
+        fflush(formatter_fp);
         pid_t id = fork(); 
         if (id == 0) 
         {
@@ -185,6 +191,7 @@ int anastart(const char* filename){
         ana_status = 1;
     }
     fflush(write_fp);
+    fflush(formatter_fp);
     fclose(read_fp);
     return ana_status;
 }

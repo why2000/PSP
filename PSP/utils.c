@@ -193,6 +193,7 @@ enum token_kind get_token(void){
                             Annotations->line = line_num;
                             for(ANN_index = 0; ANN_index < ANN_total; ANN_index++){
                                 char ann_bufc = fgetc(read_fp);
+                                if(ann_bufc == '\n')line_num += 1;
                                 Annotations->ANN_string[ANN_index] = ann_bufc;
                             }
                             Annotations->ANN_string[ANN_index] = '\0';
@@ -233,7 +234,7 @@ enum token_kind get_token(void){
             }
         }
         else if(is_letter(buf_ch)){
-            if(last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR || last_token == IF || last_token == ELSE || last_token == RET || last_token == WHILE || last_token == FOR){
+            if(last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR || last_token == IF || last_token == ELSE || last_token == RET || last_token == WHILE || last_token == FOR || last_token == BREAK || last_token == CONTINUE){
                 cur_token = IDENT;
                 if(buf_ch == 't'){
                     if(index == 2){
@@ -270,6 +271,11 @@ enum token_kind get_token(void){
                             cur_token = WHILE;
                         }
                     }
+                    else if(index == 7){
+                        if(token_name[0] == 'c' && token_name[1] == 'o' && token_name[2] == 'n' && token_name[3] == 't' && token_name[4] == 'i' && token_name[5] == 'n' && token_name[6] == 'u'){
+                            cur_token = CONTINUE;
+                        }
+                    }
                 }
                 if(buf_ch == 'n'){
                     if(index == 5){
@@ -282,6 +288,13 @@ enum token_kind get_token(void){
                     if(index == 1){
                         if(token_name[0] == 'i'){
                             cur_token = IF;
+                        }
+                    }
+                }
+                if(buf_ch == 'k'){
+                    if(index == 4){
+                        if(token_name[0] == 'b' && token_name[1] == 'r' && token_name[2] == 'e' && token_name[3] == 'a'){
+                            cur_token = BREAK;
                         }
                     }
                 }
@@ -305,7 +318,7 @@ enum token_kind get_token(void){
             if(last_token == INT_CONST || last_token == FLOAT_CONST || last_token == CHAR_CONST){
                 cur_token = last_token;
             }
-            else if (last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR || last_token == CHAR || last_token == IF || last_token == ELSE || last_token == RET || last_token == WHILE || last_token == FOR){
+            else if (last_token == IDENT || last_token == INT || last_token == FLOAT || last_token == CHAR || last_token == CHAR || last_token == IF || last_token == ELSE || last_token == RET || last_token == WHILE || last_token == FOR || last_token == BREAK || last_token == CONTINUE){
                 cur_token = IDENT;
             }
             else if (last_token == EMPTY_TOKEN){
@@ -423,6 +436,10 @@ enum token_kind get_token(void){
                 ungetc(buf_ch, read_fp);
                 return last_token;
             }
+        }
+        else if(buf_ch == '\n'){
+            line_num += 1;
+            return last_token;
         }
         else if(buf_ch == '#'){
             Precompiles->line = line_num;

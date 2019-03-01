@@ -14,6 +14,7 @@ extern RNL* leaveRNL;//"main.c"
 extern int line_num;//"main.c"
 extern int ERROR_STATUS;
 extern int* fpipe;
+extern FILE* formatter_fp;
 
 //报错系统
 void* errorfound(enum errortype index) {//index为错误索引
@@ -70,7 +71,10 @@ void* errorfound(enum errortype index) {//index为错误索引
             fprintf(write_fp, "表达式解析失败:\n");
             fprintf(write_fp, "单目运算符仅有一侧均可取值!\n");
             break;
-            
+        case SINGLESTATEERR:
+            fprintf(write_fp, "语法错误:\n");
+            fprintf(write_fp, "语句未正常结束!请检查是否缺失分号!\n");
+            break;
     }
     close(fpipe[0]);
     char child[BUFFER_SIZE] = "1";
@@ -78,6 +82,7 @@ void* errorfound(enum errortype index) {//index为错误索引
     sleep(2);
     fclose(read_fp);
     fflush(write_fp);
+    fflush(formatter_fp);
     exit(0);    
     return NULL;
 }

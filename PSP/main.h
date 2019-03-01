@@ -43,6 +43,8 @@ enum token_kind {
     RET,
     WHILE,
     FOR,
+    CONTINUE,
+    BREAK,
     ANNOTATE,// //
     LB,// {
     RB,// }
@@ -103,7 +105,9 @@ enum struct_type {
     SINGLEANN,
     MULTIANN,
     INCLUDE,
-    DEFINE
+    DEFINE,
+    BREAKSTA,
+    CONTINUESTA
 };
 
 

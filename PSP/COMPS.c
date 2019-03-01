@@ -22,6 +22,7 @@ COMPS* CompStates(RNL** leaveFunRNL, RNL** rootFunRNL){
     COMPS_cur->COMP_kind = ENDOFSTA;
     COMPS_cur->COMP->STA = NULL;
     COMPS_cur->COMP->EVD = NULL;
+    CompAgain:;
     enum token_kind buf_token = get_token();
     char name_buf[MAX_TOKEN_SIZE];
     strcpy(name_buf, token_name);
@@ -47,6 +48,10 @@ COMPS* CompStates(RNL** leaveFunRNL, RNL** rootFunRNL){
         COMPS_cur->COMP->STA->NMS = NULL;
         COMPS_cur->COMP->EVD = NULL;
         IF_STATUS = 1;
+    }
+    else if(buf_token == SEMI){
+        IF_STATUS = 0;
+        goto CompAgain;
     }
     else if(buf_token == WHILE){
         IF_STATUS = 0;
@@ -101,6 +106,42 @@ COMPS* CompStates(RNL** leaveFunRNL, RNL** rootFunRNL){
         }
         else{
             errorfound(ELSEONLY);//else without if
+        }
+    }
+    else if(buf_token == BREAK){
+        IF_STATUS = 0;
+        buf_token = get_token();
+        if(buf_token == SEMI){
+            COMPS_cur->COMP_kind = BREAKSTA;
+            COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
+            COMPS_cur->COMP->STA->ELTH = NULL;
+            COMPS_cur->COMP->STA->RTS = NULL;
+            COMPS_cur->COMP->STA->IFTH = NULL;
+            COMPS_cur->COMP->STA->NMS = NULL;
+            COMPS_cur->COMP->STA->WHILETH = NULL;
+            COMPS_cur->COMP->STA->FORTH = NULL;
+            COMPS_cur->COMP->EVD = NULL;
+        }
+        else{
+            errorfound(SINGLESTATEERR);
+        }
+    }
+    else if(buf_token == CONTINUE){
+        IF_STATUS = 0;
+        buf_token = get_token();
+        if(buf_token == SEMI){
+            COMPS_cur->COMP_kind = CONTINUESTA;
+            COMPS_cur->COMP->STA = (STA*)malloc(sizeof(STA));
+            COMPS_cur->COMP->STA->ELTH = NULL;
+            COMPS_cur->COMP->STA->RTS = NULL;
+            COMPS_cur->COMP->STA->IFTH = NULL;
+            COMPS_cur->COMP->STA->NMS = NULL;
+            COMPS_cur->COMP->STA->WHILETH = NULL;
+            COMPS_cur->COMP->STA->FORTH = NULL;
+            COMPS_cur->COMP->EVD = NULL;
+        }
+        else{
+            errorfound(SINGLESTATEERR);
         }
     }
     else{
